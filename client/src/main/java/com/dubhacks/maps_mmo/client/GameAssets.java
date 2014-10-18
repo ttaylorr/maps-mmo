@@ -29,6 +29,10 @@ public class GameAssets {
      * @throws IOException
      */
     public static boolean load() throws IOException, URISyntaxException {
+//        terrain = ImageIO.read(new File("src\\main\\resources\\LPC_Terrain_0\\terrain.png"));
+//        tree_single = ImageIO.read(new File("src\\main\\resources\\tree_single.png"));
+//        character_single = ImageIO.read(new File("src\\main\\resources\\character_single.png"));
+//        character_brunette_single = ImageIO.read(new File("src\\main\\resources\\character_brunette_single.png"));
         terrain = ImageIO.read(new File(GameAssets.class.getResource("/LPC_Terrain_0/terrain.png").toURI()));
         tree_single = ImageIO.read(new File(GameAssets.class.getResource("/tree_single.png").toURI()));
         character_single = ImageIO.read(new File(GameAssets.class.getResource("/character_single.png").toURI()));

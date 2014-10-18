@@ -10,9 +10,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.dubhacks.maps_mmo.core.IGameMap;
+import com.dubhacks.maps_mmo.core.map.GameMap;
 import com.dubhacks.maps_mmo.event.EventManager;
 import com.dubhacks.maps_mmo.net.SocketPlayer;
 import com.dubhacks.maps_mmo.packets.ConnectPacket;
+import java.awt.Point;
 
 public class Game {
     private final EventManager eventManager;
@@ -158,7 +160,12 @@ public class Game {
         }
 
         if (dx != 0 || dy != 0) {
-            localPlayer.setLocation(localPlayer.getX() + dx, localPlayer.getY() + dy);
+            byte oldTile = this.map.get(localPlayer.getX(), localPlayer.getY());
+            Point newLocation = new Point(localPlayer.getX() + dx, localPlayer.getY() + dy);
+            byte newTile = this.map.get(newLocation.x, newLocation.y);
+            if (oldTile == newTile || this.map.isTraversable(newTile)) {
+                localPlayer.setLocation(localPlayer.getX() + dx, localPlayer.getY() + dy);
+            }
         }
     }
 }
