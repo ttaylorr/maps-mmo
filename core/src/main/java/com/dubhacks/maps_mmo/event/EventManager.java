@@ -1,7 +1,6 @@
 package com.dubhacks.maps_mmo.event;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,11 +14,12 @@ public class EventManager {
         for (Method method : listener.getClass().getMethods()) {
             EventHandler annotation = method.getAnnotation(EventHandler.class);
             if (annotation != null) {
+            System.out.println("Adding 1 handler");
                 List<Class<?>> types = new ArrayList<>();
-                for (Type type : method.getTypeParameters()) {
-                    types.add(type.getClass());
+                for (Class<?> clazz : method.getParameterTypes()) {
+                    types.add(clazz);
                 }
-                this.listeners.put(types, new ListenerHandler(listener, method, annotation.priority()));
+                listeners.put(types, new ListenerHandler(listener, method, annotation.priority()));
             }
         }
     }
@@ -29,7 +29,7 @@ public class EventManager {
         for (Object obj : params) {
             types.add(obj.getClass());
         }
-        for (ListenerHandler handler : this.listeners.get(types)) {
+        for (ListenerHandler handler : listeners.get(types)) {
             handler.invoke(params);
         }
     }

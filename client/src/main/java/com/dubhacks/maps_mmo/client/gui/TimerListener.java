@@ -17,6 +17,6 @@ public class TimerListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         game.tick();
-        gamePanel.invalidate();
+        gamePanel.repaint();
     }
 }

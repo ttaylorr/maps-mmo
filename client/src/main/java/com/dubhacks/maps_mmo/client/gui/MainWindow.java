@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import com.dubhacks.maps_mmo.client.ConnectListener;
 import com.dubhacks.maps_mmo.client.Game;
 import com.dubhacks.maps_mmo.client.listeners.MapPacketListener;
 import com.dubhacks.maps_mmo.event.EventManager;
@@ -67,6 +68,8 @@ public class MainWindow {
 
         Timer timer = new Timer(1000 / 60, new TimerListener(game, gamePanel));
         timer.start();
+
+        eventManager.addListener(new ConnectListener(game));
     }
 
 }

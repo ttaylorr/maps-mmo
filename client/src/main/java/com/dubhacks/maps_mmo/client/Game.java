@@ -1,6 +1,9 @@
 package com.dubhacks.maps_mmo.client;
 
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -8,12 +11,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.dubhacks.maps_mmo.core.IGameMap;
-import com.dubhacks.maps_mmo.net.SocketPlayer;
 import com.dubhacks.maps_mmo.event.EventManager;
+import com.dubhacks.maps_mmo.net.SocketPlayer;
 import com.dubhacks.maps_mmo.packets.ConnectPacket;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 
 public class Game {
 
@@ -24,10 +24,9 @@ public class Game {
     private SocketPlayer connectingPlayer;
     private ClientPlayer player;
 
-    private Set<Integer> keysDown = new HashSet<>();
+    private final Set<Integer> keysDown = new HashSet<>();
 
-    // TODO: someone is working on making this not null
-    private byte[][] tiles;
+    private IGameMap map;
 
     public Game(EventManager eventManager) {
         this.eventManager = eventManager;
@@ -61,14 +60,27 @@ public class Game {
         bounds = newBounds;
     }
 
+    public boolean isMapLoaded() {
+        return map != null;
+    }
+
+    public void setMap(IGameMap map) {
+        this.map = map;
+        setBounds(new Rectangle(map.getWidth(), map.getHeight()));
+    }
+
     public void paint(Graphics2D g) {
-        Rectangle b = this.getBounds();
-        for (int x = 0; x < b.width; x++) {
-            for (int y = 0; y < b.height; y++) {
-                byte tile = this.tiles[b.y + y][b.x + x];
-                BufferedImage image = GameAssets.getMapTile(tile);
-                g.drawImage(image, null, 32 * x, 32 * y);
+        if (isMapLoaded()) {
+            Rectangle b = getBounds();
+            for (int x = 0; x < b.width; x++) {
+                for (int y = 0; y < b.height; y++) {
+                    byte tile = map.get(b.x + x, b.y + y);
+                    BufferedImage image = GameAssets.getMapTile(tile);
+                    g.drawImage(image, null, 32 * x, 32 * y);
+                }
             }
+        } else {
+            g.drawString("Waiting for map data to load...", 50, 50);
         }
     }
 
@@ -123,32 +135,24 @@ public class Game {
         }
 
         if (dx != 0 || dy != 0) {
-            this.tryMoveBounds(dx, dy);
+            tryMoveBounds(dx, dy);
         }
     }
-    
+
     private void tryMoveBounds(int dx, int dy) {
-        Rectangle newBounds = new Rectangle(this.bounds);
+        Rectangle newBounds = new Rectangle(bounds);
         newBounds.x += dx;
         newBounds.y += dy;
-        if (this.isValidBounds(newBounds)) {
-            this.bounds = newBounds;
+        if (isValidBounds(newBounds)) {
+            bounds = newBounds;
         }
     }
-<<<<<<< HEAD
-    
+
     private boolean isValidBounds(Rectangle bounds) {
+        if (!isMapLoaded()) return false;
         if (bounds.x < 0 || bounds.y < 0) return false;
-        if (bounds.x + bounds.width >= this.tiles[0].length) return false;
-        if (bounds.y + bounds.height >= this.tiles.length) return false;
+        if (bounds.x + bounds.width >= map.getWidth()) return false;
+        if (bounds.y + bounds.height >= map.getHeight()) return false;
         return true;
     }
-    
-=======
-
-    public void setCurrentMap(byte[][] map) {
-        this.map = map;
-        // render
-    }
->>>>>>> Send the map over the network
 }
