@@ -29,12 +29,4 @@ public class Server {
     public void tick() {
         connectionManager.tick();
     }
-
-    public void setMap(GameMap map) {
-        this.map = map;
-    }
-
-    public GameMap getMap() {
-        return map;
-    }
 }

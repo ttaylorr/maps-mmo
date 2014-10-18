@@ -2,6 +2,7 @@ package com.dubhacks.maps_mmo.client.gui;
 
 import java.awt.CardLayout;
 import java.awt.EventQueue;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -9,9 +10,8 @@ import javax.swing.Timer;
 
 import com.dubhacks.maps_mmo.client.ConnectListener;
 import com.dubhacks.maps_mmo.client.Game;
-import com.dubhacks.maps_mmo.client.listeners.MapPacketListener;
+import com.dubhacks.maps_mmo.client.GameAssets;
 import com.dubhacks.maps_mmo.event.EventManager;
-import com.dubhacks.maps_mmo.event.Listener;
 
 public class MainWindow {
 
@@ -45,6 +45,14 @@ public class MainWindow {
      * Initialize the contents of the frame.
      */
     private void initialize() {
+        try {
+            GameAssets.load();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            System.exit(1);
+        }
+
         frmMapsMmo = new JFrame();
         frmMapsMmo.setTitle("Maps MMO");
         frmMapsMmo.setBounds(100, 100, 450, 300);
@@ -59,7 +67,6 @@ public class MainWindow {
         panel.add(startPanel, "name_255977455118084");
 
         EventManager eventManager = new EventManager();
-        eventManager.addListener(new MapPacketListener());
         Game game = new Game(eventManager);
 
         GamePanel gamePanel = new GamePanel(game);

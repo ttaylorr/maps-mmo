@@ -66,11 +66,12 @@ public class Game {
 
     public void setMap(IGameMap map) {
         this.map = map;
-        setBounds(new Rectangle(map.getWidth(), map.getHeight()));
+        setBounds(new Rectangle(30, 30));
     }
 
     public void paint(Graphics2D g) {
         if (isMapLoaded()) {
+            setBounds(new Rectangle(getBounds().x, getBounds().y, (int)Math.ceil(g.getClipBounds().getWidth() / 32), (int)Math.ceil(g.getClipBounds().getHeight()/ 32)));
             Rectangle b = getBounds();
             for (int x = 0; x < b.width; x++) {
                 for (int y = 0; y < b.height; y++) {

@@ -8,6 +8,7 @@ import java.awt.event.ComponentEvent;
 import javax.swing.JPanel;
 
 import com.dubhacks.maps_mmo.client.Game;
+import com.dubhacks.maps_mmo.client.GameKeyListener;
 
 public class GamePanel extends JPanel {
 
@@ -26,13 +27,15 @@ public class GamePanel extends JPanel {
             }
         });
 
+        addKeyListener(new GameKeyListener(game));
+
         setDoubleBuffered(true);
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        this.game.paint((Graphics2D)g);
+        game.paint((Graphics2D)g);
     }
 
 }
