@@ -57,17 +57,17 @@ public class GameMap implements IGameMap {
     }
 
     public void saveAsImage(File out) throws IOException {
-        BufferedImage image = new BufferedImage(this.tiles.length, this.tiles[0].length, BufferedImage.TYPE_BYTE_BINARY);
+        BufferedImage image = new BufferedImage(this.tiles.length, this.tiles[0].length, BufferedImage.TYPE_BYTE_GRAY);
         Graphics2D g = image.createGraphics();
 
         for (int x = 0; x < this.tiles.length; x++) {
             for (int y = 0; y < this.tiles[x].length; y++) {
-                byte b = this.get(x,y);
+                byte b = this.tiles[x][y];
                 if (b != 0) {
                     GeoJsonFileType type = GeoJsonFileType.fromByte(b);
 
                     g.setColor(type.getColor());
-                    g.drawLine(x, y, x, y);
+                    g.drawLine(y, x, y, x);
                 }
             }
         }
