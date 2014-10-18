@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 public class GamePanel extends JPanel {
+    
     private final Game game;
 
     public GamePanel(Game game) {
@@ -24,7 +25,7 @@ public class GamePanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
-        game.paint(new MapView((Graphics2D)g, game.getBounds()));
+        this.game.paint((Graphics2D)g);
     }
+
 }
