@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 
 import com.dubhacks.maps_mmo.core.IGameMap;
 import com.dubhacks.maps_mmo.core.map.GameMap;
@@ -22,7 +23,7 @@ public class ServerLauncher {
     public static void main(String[] args) throws IOException {
         GameMapBuilder gmb = new GameMapBuilder();
 
-        String place = "Detroit, MI";
+        String place = JOptionPane.showInputDialog("Please enter a location...", "Seattle, WA");
         GoogleMaps.LatLng loc = GoogleMaps.fromString(place);
         double rad = 0.01;
 

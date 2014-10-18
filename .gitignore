@@ -2,3 +2,4 @@
 *.bmp
 geojson/
 osm-api/node_modules/
+gamemap.png
