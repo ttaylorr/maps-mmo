@@ -23,7 +23,7 @@ public class SocketPlayer {
         os = new ObjectOutputStream(socket.getOutputStream());
         os.flush();
         incomingPackets = new ConcurrentLinkedQueue<>();
-        new Thread(new Reader(this)).start();
+        new Thread(new Reader()).start();
     }
 
     public void sendPacket(Packet packet) {
@@ -58,18 +58,12 @@ public class SocketPlayer {
     }
 
     private class Reader implements Runnable {
-        protected final SocketPlayer player;
-
-        protected Reader(SocketPlayer player) {
-            this.player = player;
-        }
-
         @Override
         public void run() {
             try {
                 is = new ObjectInputStream(socket.getInputStream());
             } catch (EOFException e) {
-                player.disconnect();
+                SocketPlayer.this.disconnect();
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
