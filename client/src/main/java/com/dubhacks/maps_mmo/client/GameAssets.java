@@ -41,6 +41,9 @@ public class GameAssets {
         tiles[GameMap.TERRAIN_WATER] = terrain.getSubimage(896, 96, 32, 32);
         tiles[GameMap.TERRAIN_FOREST] = tree_single;
         tiles[GameMap.BUILDING_PLACEHOLDER] = terrain.getSubimage(128, 448, 32, 32);
+        for (int i = GameMap.BUILDING_PLACEHOLDER + 1; i <= GameMap.BUILDING_PIZZA; i++) {
+            tiles[i] = tiles[GameMap.BUILDING_PLACEHOLDER];
+        }
 
         return true;
     }
