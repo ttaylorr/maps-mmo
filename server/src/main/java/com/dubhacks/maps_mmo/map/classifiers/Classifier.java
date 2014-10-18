@@ -14,7 +14,7 @@ public abstract class Classifier {
 
     public abstract void classify(MinMaxLngLat mm, List<Feature> features);
 
-    public void classifyFiles(MinMaxLngLat mm, List<File> files) throws IOException {
+    public void classifyFiles(MinMaxLngLat mm, Iterable<File> files) throws IOException {
         for (File file : files) {
             FeatureCollection collection = new ObjectMapper().readValue(file, FeatureCollection.class);
             this.classify(mm, collection.getFeatures());

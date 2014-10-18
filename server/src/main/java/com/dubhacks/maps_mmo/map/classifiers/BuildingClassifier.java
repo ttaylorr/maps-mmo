@@ -9,7 +9,7 @@ import java.util.List;
 public class BuildingClassifier extends Classifier {
     @Override
     public GeoJsonFileType getType() {
-        return GeoJsonFileType.Buildings;
+        return GeoJsonFileType.BUILDINGS;
     }
 
     @Override

@@ -9,7 +9,7 @@ import java.util.List;
 public class WaterClassifier extends Classifier {
     @Override
     public GeoJsonFileType getType() {
-        return GeoJsonFileType.Water;
+        return GeoJsonFileType.WATER;
     }
 
     @Override

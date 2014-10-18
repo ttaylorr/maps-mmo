@@ -11,7 +11,7 @@ import java.util.List;
 public class RoadClassifier extends Classifier {
     @Override
     public GeoJsonFileType getType() {
-        return GeoJsonFileType.Roads;
+        return GeoJsonFileType.ROADS;
     }
 
     @Override

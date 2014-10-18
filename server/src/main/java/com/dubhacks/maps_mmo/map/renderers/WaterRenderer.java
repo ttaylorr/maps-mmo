@@ -4,9 +4,7 @@ import com.dubhacks.maps_mmo.map.GameMap;
 import com.dubhacks.maps_mmo.map.GeoJsonFileType;
 import org.geojson.*;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -17,29 +15,22 @@ public class WaterRenderer extends Renderer {
 
     @Override
     public void render(List<Feature> features) throws IOException {
-        BufferedImage waterImage = this.allocateImage();
+        BufferedImage image = this.allocateImage();
+
         for (Feature waterArea : features) {
             GeoJsonObject geometry = waterArea.getGeometry();
             if (geometry instanceof Polygon) {
-                this.draw((Polygon) geometry, waterImage);
+                this.draw((Polygon) geometry, image);
             } else if (geometry instanceof LineString) {
-                this.draw((LineString) geometry, waterImage);
+                this.draw((LineString) geometry, image);
             }
         }
 
-        for (int x = 0; x < this.map.info.width; x++) {
-            for (int y = 0; y < this.map.info.height; y++) {
-                if (waterImage.getRGB(x, y) == BINARY_IMAGE_SET) {
-                    this.map.tiles[y][x] = GameMap.TERRAIN_WATER;
-                }
-            }
-        }
-
-        ImageIO.write(waterImage, "bmp", new File("waterImage.bmp"));
+        this.write(image);
     }
 
     @Override
     public GeoJsonFileType getFileType() {
-        return GeoJsonFileType.Water;
+        return GeoJsonFileType.WATER;
     }
 }

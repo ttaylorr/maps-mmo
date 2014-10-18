@@ -4,6 +4,7 @@ import com.dubhacks.maps_mmo.map.GameMap;
 import com.dubhacks.maps_mmo.map.GeoJsonFileType;
 import com.dubhacks.maps_mmo.map.MapInfo;
 import org.geojson.*;
+import org.geojson.Polygon;
 
 import java.awt.*;
 import java.awt.Point;
@@ -22,21 +23,22 @@ public abstract class Renderer {
         this.map = map;
     }
 
-    public abstract void render(List<Feature> features) throws IOException;
-
-    public abstract GeoJsonFileType getFileType();
-
     protected BufferedImage allocateImage() {
         return new BufferedImage(this.map.info.width, this.map.info.height, BufferedImage.TYPE_BYTE_BINARY);
     }
 
+    public abstract void render(List<Feature> features) throws IOException;
+
+    public abstract GeoJsonFileType getFileType();
+
     protected void draw(LineString line, BufferedImage image) {
-        draw(line, 1, image);
+        this.draw(line, 1, image);
     }
 
     protected void draw(LineString line, float width, BufferedImage image) {
         Graphics2D g = image.createGraphics();
         g.setStroke(new BasicStroke(width));
+
         List<LngLatAlt> coords = line.getCoordinates();
         for (int i = 0; i < coords.size() - 1; i++) {
             Point start = normalize(coords.get(i), this.map.info);
@@ -46,12 +48,13 @@ public abstract class Renderer {
         g.dispose();
     }
 
-    protected void draw(org.geojson.Polygon poly, BufferedImage image) {
+    protected void draw(Polygon poly, BufferedImage image) {
         Graphics2D g = image.createGraphics();
         LinkedList<Point> points = new LinkedList<>();
         for (LngLatAlt coord : poly.getExteriorRing()) {
             points.add(normalize(coord, this.map.info));
         }
+
         GeneralPath polyLine = new GeneralPath(GeneralPath.WIND_EVEN_ODD, points.size());
         Iterator<Point> iter = points.iterator();
         Point p = iter.next();
@@ -84,6 +87,16 @@ public abstract class Renderer {
             g.fill(polyLine);
         }
         g.dispose();
+    }
+
+    protected void write(BufferedImage image) {
+        for (int xPos = 0; xPos < this.map.info.width; xPos++) {
+            for (int yPos = 0; yPos < this.map.info.width; yPos++) {
+                if (image.getRGB(xPos, yPos) == BINARY_IMAGE_SET) {
+                    this.map.set(xPos, yPos, this.getFileType());
+                }
+            }
+        }
     }
 
     private Point normalize(LngLatAlt point, MapInfo info) {

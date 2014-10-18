@@ -9,7 +9,7 @@ import java.util.List;
 public class LandUsageClassifier extends Classifier {
     @Override
     public GeoJsonFileType getType() {
-        return GeoJsonFileType.LandUsages;
+        return GeoJsonFileType.LAND_USAGES;
     }
 
     @Override

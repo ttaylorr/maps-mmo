@@ -2,20 +2,17 @@ package com.dubhacks.maps_mmo.map;
 
 import com.dubhacks.maps_mmo.map.classifiers.*;
 import com.dubhacks.maps_mmo.map.renderers.*;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import javax.imageio.ImageIO;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.TreeMultimap;
 import org.geojson.*;
 
 public class GameMapBuilder {
-    private final Map<GeoJsonFileType, List<File>> files = new TreeMap<>();
-
+    private final Multimap<GeoJsonFileType, File> files = TreeMultimap.create();
     private final double resolution;
 
     private MapInfo mapInfo;
@@ -39,16 +36,11 @@ public class GameMapBuilder {
     
     public void addFile(GeoJsonFileType type, File file) {
         if (type != null) {
-            List<File> list = this.files.get(type);
-            if (list == null) {
-                list = new LinkedList<>();
-                this.files.put(type, list);
-            }
-            list.add(file);
+            this.files.put(type, file);
         }
     }
 
-    public GameMap render() throws IOException {
+    public GameMap process() throws IOException {
         GeoJsonFileType[] types = GeoJsonFileType.values();
         for (GeoJsonFileType type : types) {
             if (!this.files.containsKey(type)) {
@@ -96,49 +88,5 @@ public class GameMapBuilder {
         }
 
         return new MapInfo(mm, this.resolution);
-    }
-
-    public static void main(String[] args) throws IOException, InterruptedException {
-        GameMapBuilder gmb = new GameMapBuilder();
-
-        gmb.addFile(GeoJsonFileType.Water, new File("geojson/seattle_washington-waterareas.geojson"));
-        gmb.addFile(GeoJsonFileType.Roads, new File("geojson/seattle_washington-roads.geojson"));
-        gmb.addFile(GeoJsonFileType.LandUsages, new File("geojson/seattle_washington-landusages.geojson"));
-        gmb.addFile(GeoJsonFileType.Buildings, new File("geojson/seattle_washington-buildings.geojson"));
-
-        GameMap map = gmb.render();
-
-        System.out.print("Writing to image...");
-        writeToImage(map, "png", new File("gamemap.png"));
-        System.out.println("done");
-    }
-    
-    private static void writeToImage(GameMap map, String format, File imageFile) throws IOException {
-        BufferedImage image = new BufferedImage(map.getWidth(), map.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
-        Graphics2D g = image.createGraphics();
-        for (int x = 0; x < map.getWidth(); x++) {
-            for (int y = 0; y < map.getHeight(); y++) {
-                switch (map.get(x, y)) {
-                    case GameMap.TERRAIN_WATER:
-                        g.setColor(Color.BLUE);
-                        g.drawLine(x, y, x, y);
-                        break;
-                    case GameMap.ROAD_MEDIUM:
-                        g.setColor(Color.LIGHT_GRAY);
-                        g.drawLine(x, y, x, y);
-                        break;
-                    case GameMap.BUILDING_PLACEHOLDER:
-                        g.setColor(Color.GRAY);
-                        g.drawLine(x, y, x, y);
-                        break;
-                    case GameMap.TERRAIN_FOREST:
-                        g.setColor(Color.GREEN);
-                        g.drawLine(x, y, x, y);
-                        break;
-                }
-            }
-        }
-        g.dispose();
-        ImageIO.write(image, format, imageFile);
     }
 }
