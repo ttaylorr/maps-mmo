@@ -18,13 +18,15 @@ public class BuildingRenderer extends Renderer {
         BufferedImage image = this.allocateBinaryImage();
 
         for (Feature building : features) {
-            GeoJsonObject geometry = building.getGeometry();
-            if (geometry instanceof MultiPolygon) {
-                this.draw((MultiPolygon) geometry, image);
-            } else if (geometry instanceof Polygon) {
-                this.draw((Polygon) geometry, image);
-            } else if (geometry instanceof LineString) {
-                this.draw((LineString) geometry, image);
+            if ("yes".equals(building.getProperty("building"))) {
+                GeoJsonObject geometry = building.getGeometry();
+                if (geometry instanceof MultiPolygon) {
+                    this.draw((MultiPolygon) geometry, image);
+                } else if (geometry instanceof Polygon) {
+                    this.draw((Polygon) geometry, image);
+                } else if (geometry instanceof LineString) {
+                    this.draw((LineString) geometry, image);
+                }
             }
         }
 

@@ -18,11 +18,13 @@ public class WaterRenderer extends Renderer {
         BufferedImage image = this.allocateBinaryImage();
 
         for (Feature waterArea : features) {
-            GeoJsonObject geometry = waterArea.getGeometry();
-            if (geometry instanceof Polygon) {
-                this.draw((Polygon) geometry, image);
-            } else if (geometry instanceof LineString) {
-                this.draw((LineString) geometry, image);
+            if (waterArea.getProperty("waterway") != null || "water".equals(waterArea.getProperty("natural"))) {
+                GeoJsonObject geometry = waterArea.getGeometry();
+                if (geometry instanceof Polygon) {
+                    this.draw((Polygon) geometry, image);
+                } else if (geometry instanceof LineString) {
+                    this.draw((LineString) geometry, image);
+                }
             }
         }
 

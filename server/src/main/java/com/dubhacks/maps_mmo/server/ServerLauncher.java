@@ -18,18 +18,13 @@ import com.dubhacks.maps_mmo.net.NetworkDefaults;
 
 public class ServerLauncher {
     public static final int TICK_FREQUENCY = 20; // ticks per second
-    public static final String FILE_PREFIX = "portland_maine.imposm-geojson/portland_maine";
 
     public static void main(String[] args) throws IOException {
         GameMapBuilder gmb = new GameMapBuilder();
 
-        gmb.addFile(GeoJsonFileType.WATER, new File(FILE_PREFIX + "-waterareas.geojson"));
-        gmb.addFile(GeoJsonFileType.ROADS, new File(FILE_PREFIX + "-roads.geojson"));
-        gmb.addFile(GeoJsonFileType.LAND_USAGES, new File(FILE_PREFIX + "-landusages.geojson"));
-        gmb.addFile(GeoJsonFileType.BUILDINGS, new File(FILE_PREFIX + "-buildings.geojson"));
+        gmb.source("http://localhost:3000/center/?x=42.541507&y=-83.221497&r=0.05");
 
         GameMap map = gmb.process();
-
         saveMapAsImage(map, new File("gamemap.png"));
 
         System.out.println("Starting server");

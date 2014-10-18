@@ -6,25 +6,19 @@ import com.dubhacks.maps_mmo.core.map.MinMaxLngLat;
 import com.dubhacks.maps_mmo.map.classifiers.*;
 import com.dubhacks.maps_mmo.map.renderers.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.google.common.collect.Multimap;
-import com.google.common.collect.TreeMultimap;
-
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.*;
 
-import org.geojson.FeatureCollection;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.geojson.*;
 
 public class GameMapBuilder {
 
-    private final Multimap<GeoJsonFileType, File> files = TreeMultimap.create();
-    private final Map<File, FeatureCollection> features = new HashMap<>();
+    private final Set<FeatureCollection> features = new HashSet<>();
     private final double resolution;
 
     private MapInfo mapInfo;
@@ -45,23 +39,16 @@ public class GameMapBuilder {
         
         this.resolution = resolution;
     }
-    
-    public void addFile(GeoJsonFileType type, File file) {
-        if (type != null) {
-            this.files.put(type, file);
-        }
+
+    public void source(String s) throws IOException {
+        URL url = new URL(s);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+
+        this.features.add(new ObjectMapper().readValue(conn.getInputStream(), FeatureCollection.class));
     }
 
     public GameMap process() throws IOException {
-        this.loadFeatures();
-
-        GeoJsonFileType[] types = GeoJsonFileType.values();
-        for (GeoJsonFileType type : types) {
-            if (!this.files.containsKey(type)) {
-                throw new IllegalStateException("must set a GeoJSON file for " + type + " before rendering");
-            }
-        }
-
         System.out.println("Calculating map parameters...");
         this.mapInfo = this.calculateMapParameters();
         System.out.printf("width: %d    height: %d\n", mapInfo.width, mapInfo.height);
@@ -81,8 +68,8 @@ public class GameMapBuilder {
         for (Renderer renderer : renderers) {
             System.out.print("Starting render of type: " + renderer.getClass().getSimpleName() + "...");
             long start = System.currentTimeMillis();
-            for (File file : this.files.get(renderer.getFileType())) {
-                renderer.render(this.features.get(file).getFeatures());
+            for (FeatureCollection features : this.features) {
+                renderer.render(features.getFeatures());
             }
             System.out.print(" (Finished in "+(System.currentTimeMillis() - start)+"ms)\n");
         }
@@ -90,42 +77,25 @@ public class GameMapBuilder {
         this.tiles = null;
         this.mapInfo = null;
 
-        this.unloadFeatures();
-
         return gameMap;
-    }
-
-    private void loadFeatures() {
-        System.out.println("Loading features...");
-        long start = System.currentTimeMillis();
-
-        for (File file : this.files.values()) {
-            try {
-                this.features.put(file, new ObjectMapper().readValue(file, FeatureCollection.class));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        System.out.println("Finished loading all features... (in "+(System.currentTimeMillis() - start)+"ms)");
-    }
-    
-    private void unloadFeatures() {
-        this.features.clear();
     }
 
     private MapInfo calculateMapParameters() throws IOException {
         MinMaxLngLat mm = new MinMaxLngLat();
 
-        List<Classifier> classifiers = Arrays.asList(new RoadClassifier(), new WaterClassifier(), new LandUsageClassifier(), new BuildingClassifier());
-        for (Classifier classifier : classifiers) {
-            List<File> files = new ArrayList<>(this.files.get(classifier.getType()));
-            for (File file : files) {
-                classifier.classify(mm, this.features.get(file).getFeatures());
+        for (FeatureCollection collection : this.features) {
+            for (Feature f : collection.getFeatures()) {
+                GeoJsonObject geometry = f.getGeometry();
+                if (geometry instanceof Polygon) {
+                    Classifiers.put(mm, (Polygon) geometry);
+                } else if (geometry instanceof LineString) {
+                    Classifiers.put(mm, (LineString) geometry);
+                } else if (geometry instanceof MultiPolygon) {
+                    Classifiers.put(mm, (MultiPolygon) geometry);
+                }
             }
         }
 
         return new MapInfo(mm, this.resolution);
     }
-    
 }

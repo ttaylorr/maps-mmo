@@ -21,10 +21,12 @@ public class RoadRenderer extends Renderer {
         BufferedImage image = this.allocateBinaryImage();
 
         for (Feature road : features) {
-            String type = road.getProperty("type");
-            GeoJsonObject geometry = road.getGeometry();
-            if (geometry instanceof LineString) {
-                this.draw((LineString) geometry, widthOf(type), image);
+            String type = road.getProperty("highway");
+            if (type != null) {
+                GeoJsonObject geometry = road.getGeometry();
+                if (geometry instanceof LineString) {
+                    this.draw((LineString) geometry, widthOf(type), image);
+                }
             }
         }
 
