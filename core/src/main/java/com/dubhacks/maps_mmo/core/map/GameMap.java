@@ -4,6 +4,8 @@ import com.dubhacks.maps_mmo.core.IGameMap;
 
 public class GameMap implements IGameMap {
     
+    public static final byte BLANK_TILE = 1;
+    
     public static final byte TERRAIN_WATER = 10;
     public static final byte TERRAIN_FOREST = 11;
     
