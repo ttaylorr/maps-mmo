@@ -1,4 +1,4 @@
-package com.dubhacks.maps_mmo.events;
+package com.dubhacks.maps_mmo.event;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

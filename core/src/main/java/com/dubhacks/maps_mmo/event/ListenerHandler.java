@@ -1,14 +1,12 @@
-package com.dubhacks.maps_mmo.events;
-
-import com.dubhacks.maps_mmo.packets.Packet;
+package com.dubhacks.maps_mmo.event;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class ListenerHandler implements Comparable<ListenerHandler> {
-    protected Method handler;
-    protected Listener instance;
-    protected EventHandler.Priority priority;
+    private final Method handler;
+    private final Listener instance;
+    private final EventHandler.Priority priority;
 
     public ListenerHandler(Listener instance, Method method, EventHandler.Priority priority) {
         this.instance = instance;
@@ -16,9 +14,9 @@ public class ListenerHandler implements Comparable<ListenerHandler> {
         this.priority = priority;
     }
 
-    public void invoke(Packet packet) {
+    public void invoke(Object... values) {
         try {
-            this.handler.invoke(this.instance, packet);
+            this.handler.invoke(this.instance, values);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }

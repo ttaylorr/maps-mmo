@@ -7,12 +7,21 @@ import org.geojson.FeatureCollection;
 import org.geojson.LineString;
 import org.geojson.LngLatAlt;
 
+import com.dubhacks.map_mmo.net.SocketPlayer;
+import com.dubhacks.maps_mmo.event.EventManager;
+
 public class Game {
+    private final EventManager eventManager;
+
     private final FeatureCollection roads;
     private Bounds bounds;
     private GamePanel panel;
 
-    public Game(FeatureCollection roads) {
+    private SocketPlayer connectingPlayer;
+    private ClientPlayer player;
+
+    public Game(EventManager eventManager, FeatureCollection roads) {
+        this.eventManager = eventManager;
         this.roads = roads;
     }
 
@@ -48,26 +57,30 @@ public class Game {
                 }
             }
         }
-        //Bounds bounds = calculateBounds(featureCollection);
-        //double scaleX = g.getClipBounds().getWidth() / (bounds.max.getLongitude() - bounds.min.getLongitude());
-        //double scaleY = g.getClipBounds().getHeight() / (bounds.max.getLatitude() - bounds.min.getLatitude());
-        //System.out.println("ScaleX: " + scaleX);
-        //System.out.println("ScaleY: " + scaleY);
-        //for (Feature feature : featureCollection.getFeatures()) {
-        //    if (feature.getGeometry() instanceof LineString) {
-        //        LineString str = (LineString)feature.getGeometry();
-        //        Iterator<LngLatAlt> coords = str.getCoordinates().iterator();
-        //        LngLatAlt prev = coords.next();
-        //        while (coords.hasNext()) {
-        //            LngLatAlt next = coords.next();
-        //            g.drawLine((int)(((prev.getLongitude() - bounds.min.getLongitude()) * scaleX)),
-        //                       (int)(g.getClipBounds().getHeight() - 1 - ((prev.getLatitude() - bounds.min.getLatitude()) * scaleY)),
-        //                       (int)(((next.getLongitude() - bounds.min.getLongitude()) * scaleX)),
-        //                       (int)(g.getClipBounds().getHeight() - 1 - ((next.getLatitude() - bounds.min.getLatitude()) * scaleY)));
-        //            prev = next;
-        //        }
-        //    }
-        //}
+    }
 
+    public ClientPlayer getPlayer() {
+        return player;
+    }
+
+    public void setConnectingPlayer(SocketPlayer socketPlayer) {
+        connectingPlayer = socketPlayer;
+    }
+
+    public void setPlayer(ClientPlayer player) {
+        this.player = player;
+    }
+
+    public void tick() {
+        if (connectingPlayer != null) {
+            while (connectingPlayer.hasPacket()) {
+                eventManager.dispatch(connectingPlayer, connectingPlayer.getNextPacket());
+            }
+        }
+        if (player != null) {
+            while (player.getSocketPlayer().hasPacket()) {
+                eventManager.dispatch(player, player.getSocketPlayer().getNextPacket());
+            }
+        }
     }
 }

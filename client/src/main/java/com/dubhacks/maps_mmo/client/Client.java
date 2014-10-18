@@ -2,12 +2,17 @@ package com.dubhacks.maps_mmo.client;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 
 import javax.swing.JFrame;
 
 import org.geojson.FeatureCollection;
 import org.geojson.LngLatAlt;
 
+import com.dubhacks.map_mmo.net.NetworkDefaults;
+import com.dubhacks.map_mmo.net.SocketPlayer;
+import com.dubhacks.maps_mmo.event.EventManager;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -21,7 +26,8 @@ public class Client {
         System.out.println("Min: " + toString(bounds.min));
         System.out.println("Max: " + toString(bounds.max));
 
-        Game game = new Game(featureCollection);
+        EventManager eventManager = new EventManager();
+        Game game = new Game(eventManager, featureCollection);
 
         JFrame frame = new JFrame("Maps MMO");
         frame.setContentPane(new GamePanel(game));
@@ -30,6 +36,10 @@ public class Client {
         frame.setVisible(true);
 
         game.setBounds(bounds);
+
+        Socket socket = new Socket();
+        socket.connect(new InetSocketAddress("localhost", NetworkDefaults.DEFAULT_PORT));
+        game.setConnectingPlayer(new SocketPlayer(socket));
     }
 
     private static String toString(LngLatAlt p) {
