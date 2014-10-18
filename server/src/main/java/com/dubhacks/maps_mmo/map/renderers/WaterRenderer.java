@@ -15,7 +15,7 @@ public class WaterRenderer extends Renderer {
 
     @Override
     public void render(List<Feature> features) throws IOException {
-        BufferedImage image = this.allocateImage();
+        BufferedImage image = this.allocateBinaryImage();
 
         for (Feature waterArea : features) {
             GeoJsonObject geometry = waterArea.getGeometry();
@@ -26,7 +26,7 @@ public class WaterRenderer extends Renderer {
             }
         }
 
-        this.write(image);
+        this.write(image, GameMap.TERRAIN_WATER);
     }
 
     @Override

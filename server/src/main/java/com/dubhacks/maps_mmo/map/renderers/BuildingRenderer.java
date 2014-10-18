@@ -15,7 +15,7 @@ public class BuildingRenderer extends Renderer {
 
     @Override
     public void render(List<Feature> features) throws IOException {
-        BufferedImage image = this.allocateImage();
+        BufferedImage image = this.allocateBinaryImage();
 
         for (Feature building : features) {
             GeoJsonObject geometry = building.getGeometry();
@@ -28,7 +28,7 @@ public class BuildingRenderer extends Renderer {
             }
         }
 
-        this.write(image);
+        this.write(image, GameMap.BUILDING_PLACEHOLDER);
     }
 
     @Override

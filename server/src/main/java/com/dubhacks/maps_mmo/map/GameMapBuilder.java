@@ -1,24 +1,28 @@
 package com.dubhacks.maps_mmo.map;
 
-import com.dubhacks.maps_mmo.core.map.MinMaxLngLat;
-import com.dubhacks.maps_mmo.core.map.MapInfo;
-import com.dubhacks.maps_mmo.core.IGameMap;
 import com.dubhacks.maps_mmo.core.map.GameMap;
+import com.dubhacks.maps_mmo.core.map.MapInfo;
+import com.dubhacks.maps_mmo.core.map.MinMaxLngLat;
 import com.dubhacks.maps_mmo.map.classifiers.*;
 import com.dubhacks.maps_mmo.map.renderers.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.google.common.collect.Multimap;
 import com.google.common.collect.TreeMultimap;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
-import org.geojson.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.geojson.FeatureCollection;
 
 public class GameMapBuilder {
+
     private final Multimap<GeoJsonFileType, File> files = TreeMultimap.create();
     private final Map<File, FeatureCollection> features = new HashMap<>();
     private final double resolution;
@@ -58,7 +62,7 @@ public class GameMapBuilder {
             }
         }
 
-        System.out.print("Calculating map parameters...");
+        System.out.println("Calculating map parameters...");
         this.mapInfo = this.calculateMapParameters();
         System.out.printf("width: %d    height: %d\n", mapInfo.width, mapInfo.height);
         System.out.printf("LNG[x]  min:%10.6f  max:%10.6f\n", mapInfo.latitude.getMin(), mapInfo.latitude.getMax());

@@ -15,15 +15,16 @@ import java.util.*;
 import java.util.List;
 
 public abstract class Renderer {
+
     protected static final int BINARY_IMAGE_SET = 0xffffffff;
 
-    protected final GameMap map;
+    protected GameMap map;
 
     public Renderer(GameMap map) {
         this.map = map;
     }
 
-    protected BufferedImage allocateImage() {
+    protected BufferedImage allocateBinaryImage() {
         return new BufferedImage(this.map.info.width, this.map.info.height, BufferedImage.TYPE_BYTE_BINARY);
     }
 
@@ -89,11 +90,11 @@ public abstract class Renderer {
         g.dispose();
     }
 
-    protected void write(BufferedImage image) {
+    protected void write(BufferedImage image, byte b) {
         for (int xPos = 0; xPos < image.getWidth(); xPos++) {
             for (int yPos = 0; yPos < image.getHeight(); yPos++) {
                 if (image.getRGB(xPos, yPos) == BINARY_IMAGE_SET) {
-                    this.map.set(xPos, yPos, this.getFileType().asByte());
+                    this.map.set(xPos, yPos, b);
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.dubhacks.maps_mmo.server;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -74,9 +75,7 @@ public class ServerLauncher {
             for (int y = 0; y < map.getHeight(); y++) {
                 byte b = map.get(x, y);
                 if (b != 0) {
-                    GeoJsonFileType type = GeoJsonFileType.fromByte(b);
-
-                    g.setColor(type.getColor());
+                    g.setColor(byteColor(b));
                     g.drawLine(x, y, x, y);
                 }
             }
@@ -85,4 +84,9 @@ public class ServerLauncher {
         g.dispose();
         ImageIO.write(image, "png", out);
     }
+    
+    private static Color byteColor(byte b) {
+        return new Color(b | (b << 8) | (b << 16));
+    }
+    
 }

@@ -18,7 +18,7 @@ public class RoadRenderer extends Renderer {
 
     @Override
     public void render(List<Feature> features) throws IOException {
-        BufferedImage image = this.allocateImage();
+        BufferedImage image = this.allocateBinaryImage();
 
         for (Feature road : features) {
             String type = road.getProperty("type");
@@ -28,7 +28,7 @@ public class RoadRenderer extends Renderer {
             }
         }
 
-        this.write(image);
+        this.write(image, GameMap.ROAD_MEDIUM);
     }
 
     private static float widthOf(String type) {
