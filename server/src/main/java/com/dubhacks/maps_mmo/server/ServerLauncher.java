@@ -22,7 +22,7 @@ public class ServerLauncher {
     public static void main(String[] args) throws IOException {
         GameMapBuilder gmb = new GameMapBuilder();
 
-        String place = "663 W Frank Street, Birmingham, MI";
+        String place = "Detroit, MI";
         GoogleMaps.LatLng loc = GoogleMaps.fromString(place);
         double rad = 0.01;
 
