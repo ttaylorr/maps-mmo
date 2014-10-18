@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-import javax.swing.JFrame;
-
 import com.dubhacks.map_mmo.net.NetworkDefaults;
-import org.geojson.LngLatAlt;
 
 import com.fasterxml.jackson.core.JsonParseException;
 
@@ -15,7 +12,7 @@ public class Client {
     public static void main(String[] args) throws JsonParseException, IOException {
         Socket s = new Socket();
         s.connect(new InetSocketAddress(NetworkDefaults.DEFAULT_PORT));
-while(true);
+
 //        JFrame frame = new JFrame("Maps MMO");
 //        frame.setContentPane(new GamePanel(game));
 //        frame.pack();
