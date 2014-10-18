@@ -1,28 +1,30 @@
 package com.dubhacks.maps_mmo.client;
 
-import java.util.Iterator;
-
-import org.geojson.Feature;
-import org.geojson.FeatureCollection;
-import org.geojson.LineString;
-import org.geojson.LngLatAlt;
+import java.awt.event.KeyEvent;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.dubhacks.map_mmo.net.SocketPlayer;
 import com.dubhacks.maps_mmo.event.EventManager;
 
 public class Game {
+    public static final double TRANSLATE_X = 0.01;
+    public static final double TRANSLATE_Y = 0.01;
+    public static final double ZOOM_X = 0.01;
+    public static final double ZOOM_Y = 0.01;
+
     private final EventManager eventManager;
 
-    private final FeatureCollection roads;
     private Bounds bounds;
     private GamePanel panel;
 
     private SocketPlayer connectingPlayer;
     private ClientPlayer player;
 
-    public Game(EventManager eventManager, FeatureCollection roads) {
+    private static Set<Integer> keysDown = new HashSet<>();
+
+    public Game(EventManager eventManager) {
         this.eventManager = eventManager;
-        this.roads = roads;
     }
 
     public void setPanel(GamePanel panel) {
@@ -45,7 +47,7 @@ public class Game {
     }
 
     public void paint(MapView view) {
-        for (Feature road : roads.getFeatures()) {
+        /*for (Feature road : roads.getFeatures()) {
             if (road.getGeometry() instanceof LineString) {
                 LineString str = (LineString)road.getGeometry();
                 Iterator<LngLatAlt> coords = str.getCoordinates().iterator();
@@ -56,7 +58,7 @@ public class Game {
                     prev = next;
                 }
             }
-        }
+        }*/
     }
 
     public ClientPlayer getPlayer() {
@@ -71,6 +73,18 @@ public class Game {
         this.player = player;
     }
 
+    public void setKeyDown(int keyCode) {
+        keysDown.add(keyCode);
+    }
+
+    public void setKeyUp(int keyCode) {
+        keysDown.remove(keyCode);
+    }
+
+    public boolean isKeyDown(int keyCode) {
+        return keysDown.contains(keyCode);
+    }
+
     public void tick() {
         if (connectingPlayer != null) {
             while (connectingPlayer.hasPacket()) {
@@ -81,6 +95,25 @@ public class Game {
             while (player.getSocketPlayer().hasPacket()) {
                 eventManager.dispatch(player, player.getSocketPlayer().getNextPacket());
             }
+        }
+
+        if (isKeyDown(KeyEvent.VK_LEFT)) {
+            setBounds(Bounds.transformByAddition(getBounds(), -TRANSLATE_X, 0, -TRANSLATE_X, 0));
+        }
+        if (isKeyDown(KeyEvent.VK_RIGHT)){
+            setBounds(Bounds.transformByAddition(getBounds(), TRANSLATE_X, 0, TRANSLATE_X, 0));
+        }
+        if (isKeyDown(KeyEvent.VK_UP)){
+            setBounds(Bounds.transformByAddition(getBounds(), 0, TRANSLATE_Y, 0, TRANSLATE_Y));
+        }
+        if (isKeyDown(KeyEvent.VK_DOWN)) {
+            setBounds(Bounds.transformByAddition(getBounds(), 0, -TRANSLATE_Y, 0, -TRANSLATE_Y));
+        }
+        if (isKeyDown(KeyEvent.VK_EQUALS)) {
+            setBounds(Bounds.zoom(getBounds(), -ZOOM_X, -ZOOM_Y));
+        }
+        if (isKeyDown(KeyEvent.VK_MINUS)) {
+            setBounds(Bounds.zoom(getBounds(), ZOOM_X, ZOOM_Y));
         }
     }
 }

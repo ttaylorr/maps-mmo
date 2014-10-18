@@ -30,4 +30,26 @@ public class Bounds {
         }
         return new Bounds(min, max);
     }
+
+    public static Bounds transformByAddition(Bounds old, double dx1, double dy1, double dx2, double dy2) {
+        LngLatAlt min = new LngLatAlt(old.min.getLongitude() + dx1, old.min.getLatitude() + dy1);
+        LngLatAlt max = new LngLatAlt(old.max.getLongitude() + dx2, old.max.getLatitude() + dy2);
+        return new Bounds(min, max);
+    }
+
+    public static Bounds transformByMultiplication(Bounds old, double dx1, double dy1, double dx2, double dy2) {
+        LngLatAlt min = new LngLatAlt(old.min.getLongitude() * dx1, old.min.getLatitude() * dy1);
+        LngLatAlt max = new LngLatAlt(old.max.getLongitude() * dx2, old.max.getLatitude() * dy2);
+        return new Bounds(min, max);
+    }
+
+    public static Bounds zoom(Bounds old, double zoomX, double zoomY) {
+        double meanLongitude = (old.min.getLongitude() + old.max.getLongitude()) / 2;
+        double meanLatitude = (old.min.getLatitude() + old.max.getLatitude()) / 2;
+        LngLatAlt min = new LngLatAlt(meanLongitude + (old.min.getLongitude() - meanLongitude) * (1 + zoomX),
+                                      meanLatitude + (old.min.getLatitude() - meanLatitude) * (1 + zoomY));
+        LngLatAlt max = new LngLatAlt(meanLongitude + (old.max.getLongitude() - meanLongitude) * (1 + zoomX),
+                                      meanLatitude + (old.max.getLatitude() - meanLatitude) * (1 + zoomY));
+        return new Bounds(min, max);
+    }
 }
