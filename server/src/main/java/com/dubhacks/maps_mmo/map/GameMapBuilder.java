@@ -6,9 +6,7 @@ import com.dubhacks.maps_mmo.core.map.MinMaxLngLat;
 import com.dubhacks.maps_mmo.map.classifiers.*;
 import com.dubhacks.maps_mmo.map.renderers.*;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
@@ -25,7 +23,7 @@ public class GameMapBuilder {
     private byte[][] tiles;
 
     public GameMapBuilder() {
-        this(0.0001);
+        this(0.00001);
     }
     
     /**
