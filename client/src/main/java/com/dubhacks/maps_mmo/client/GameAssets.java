@@ -3,6 +3,7 @@ package com.dubhacks.maps_mmo.client;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.imageio.ImageIO;
 
@@ -27,11 +28,11 @@ public class GameAssets {
      * <p>
      * @throws IOException
      */
-    public static boolean load() throws IOException {
-        terrain = ImageIO.read(new File("src/main/resources/LPC_Terrain_0/terrain.png"));
-        tree_single = ImageIO.read(new File("src/main/resources/tree_single.png"));
-        character_single = ImageIO.read(new File("src/main/resources/character_single.png"));
-        character_brunette_single = ImageIO.read(new File("src/main/resources/character_brunette_single.png"));
+    public static boolean load() throws IOException, URISyntaxException {
+        terrain = ImageIO.read(new File(GameAssets.class.getResource("/LPC_Terrain_0/terrain.png").toURI()));
+        tree_single = ImageIO.read(new File(GameAssets.class.getResource("/tree_single.png").toURI()));
+        character_single = ImageIO.read(new File(GameAssets.class.getResource("/character_single.png").toURI()));
+        character_brunette_single = ImageIO.read(new File(GameAssets.class.getResource("/character_brunette_single.png").toURI()));
 
         blank = terrain.getSubimage(384, 352, 32, 32);
 

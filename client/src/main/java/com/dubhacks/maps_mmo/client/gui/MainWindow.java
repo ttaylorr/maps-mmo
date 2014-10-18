@@ -3,6 +3,7 @@ package com.dubhacks.maps_mmo.client.gui;
 import java.awt.CardLayout;
 import java.awt.EventQueue;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -52,6 +53,8 @@ public class MainWindow {
             // TODO Auto-generated catch block
             e.printStackTrace();
             System.exit(1);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
         }
 
         frmMapsMmo = new JFrame();
