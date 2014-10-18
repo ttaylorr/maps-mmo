@@ -1,6 +1,8 @@
 package com.dubhacks.maps_mmo.core;
 
-public interface IGamePlayer {
+import java.io.Serializable;
+
+public interface IGamePlayer extends Serializable {
     
     String getDisplayName();
     

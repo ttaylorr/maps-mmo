@@ -1,9 +1,11 @@
 package com.dubhacks.maps_mmo.core;
 
+import java.io.Serializable;
+
 /**
  * Interface for a player's inventory.
  */
-public interface IGameInventory {
+public interface IGameInventory extends Serializable {
     
     /**
      * Returns the size of the inventory.

@@ -1,6 +1,8 @@
 package com.dubhacks.maps_mmo.core;
 
-public interface IGameInventoryObject {
+import java.io.Serializable;
+
+public interface IGameInventoryObject extends Serializable {
     
     String getDisplayName();
     

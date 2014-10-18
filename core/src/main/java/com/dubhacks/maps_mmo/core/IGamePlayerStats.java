@@ -1,6 +1,8 @@
 package com.dubhacks.maps_mmo.core;
 
-public interface IGamePlayerStats {
+import java.io.Serializable;
+
+public interface IGamePlayerStats extends Serializable {
     
     int get(String stat);
     
