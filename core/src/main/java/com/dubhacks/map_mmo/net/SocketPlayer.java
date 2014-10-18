@@ -1,5 +1,6 @@
 package com.dubhacks.map_mmo.net;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -22,7 +23,7 @@ public class SocketPlayer {
         os = new ObjectOutputStream(socket.getOutputStream());
         os.flush();
         incomingPackets = new ConcurrentLinkedQueue<>();
-        new Thread(new Reader()).start();
+        new Thread(new Reader(this)).start();
     }
 
     public void sendPacket(Packet packet) {
@@ -49,6 +50,7 @@ public class SocketPlayer {
 
     public void disconnect() {
         try {
+            System.out.println("Disconnecting client from: " + this.socket.getRemoteSocketAddress());
             socket.close();
         } catch (IOException e) {
             System.err.println("ERROR disconnecting client " + remoteAddress + ": " + e.getMessage());
@@ -56,10 +58,18 @@ public class SocketPlayer {
     }
 
     private class Reader implements Runnable {
+        protected final SocketPlayer player;
+
+        protected Reader(SocketPlayer player) {
+            this.player = player;
+        }
+
         @Override
         public void run() {
             try {
                 is = new ObjectInputStream(socket.getInputStream());
+            } catch (EOFException e) {
+                player.disconnect();
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
