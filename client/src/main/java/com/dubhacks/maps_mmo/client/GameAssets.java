@@ -3,8 +3,6 @@ package com.dubhacks.maps_mmo.client;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
-import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 
@@ -13,9 +11,11 @@ import com.dubhacks.maps_mmo.core.map.GameMap;
 public class GameAssets {
 
     private static BufferedImage terrain;
+    private static BufferedImage treesingle;
+    
     private static BufferedImage blank;
 
-    private static Map<Byte, BufferedImage> tiles;
+    private static BufferedImage[] tiles;
 
     /**
      * Loads game assets into memory.
@@ -25,20 +25,23 @@ public class GameAssets {
      * @throws IOException
      */
     public static boolean load() throws IOException {
-        terrain = ImageIO.read(
-                /*ClassLoader.getSystemResourceAsStream*/new File("src/main/resources/LPC_Terrain_0/terrain.png"));
+        terrain = ImageIO.read(new File("src/main/resources/LPC_Terrain_0/terrain.png"));
+        treesingle = ImageIO.read(new File("src/main/resources/tree_single.png"));
 
         blank = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
 
-        tiles = new TreeMap<>();
-        tiles.put(GameMap.BLANK_TILE, blank);
-        tiles.put(GameMap.ROAD_MEDIUM, terrain.getSubimage(928, 672, 32, 32));
+        tiles = new BufferedImage[256];
+        tiles[GameMap.BLANK_TILE] = blank;
+        tiles[GameMap.ROAD_MEDIUM] = terrain.getSubimage(928, 672, 32, 32);
+        tiles[GameMap.TERRAIN_WATER] = terrain.getSubimage(896, 96, 32, 32);
+        tiles[GameMap.TERRAIN_FOREST] = treesingle;
+        tiles[GameMap.BUILDING_PLACEHOLDER] = terrain.getSubimage(128, 448, 32, 32);
 
         return true;
     }
 
     public static BufferedImage getMapTile(byte b) {
-        BufferedImage image = tiles.get(b);
+        BufferedImage image = tiles[b];
         return image == null ? blank : image;
     }
 
