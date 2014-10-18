@@ -8,7 +8,9 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import com.dubhacks.maps_mmo.client.Game;
+import com.dubhacks.maps_mmo.client.listeners.MapPacketListener;
 import com.dubhacks.maps_mmo.event.EventManager;
+import com.dubhacks.maps_mmo.event.Listener;
 
 public class MainWindow {
 
@@ -56,6 +58,7 @@ public class MainWindow {
         panel.add(startPanel, "name_255977455118084");
 
         EventManager eventManager = new EventManager();
+        eventManager.addListener(new MapPacketListener());
         Game game = new Game(eventManager);
 
         GamePanel gamePanel = new GamePanel(game);

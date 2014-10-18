@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.dubhacks.maps_mmo.core.IGameMap;
 import com.dubhacks.maps_mmo.net.SocketPlayer;
 import com.dubhacks.maps_mmo.event.EventManager;
 import com.dubhacks.maps_mmo.packets.ConnectPacket;
@@ -134,6 +135,7 @@ public class Game {
             this.bounds = newBounds;
         }
     }
+<<<<<<< HEAD
     
     private boolean isValidBounds(Rectangle bounds) {
         if (bounds.x < 0 || bounds.y < 0) return false;
@@ -142,4 +144,11 @@ public class Game {
         return true;
     }
     
+=======
+
+    public void setCurrentMap(byte[][] map) {
+        this.map = map;
+        // render
+    }
+>>>>>>> Send the map over the network
 }

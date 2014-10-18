@@ -35,6 +35,7 @@ public class ServerLauncher {
         EventManager eventManager = new EventManager();
         final ServerConnectionManager connManager = new ServerConnectionManager(serverSocket, eventManager);
         Server server = new Server(connManager, eventManager);
+        server.setMap(map);
 
         eventManager.addListener(new ConnectListener(server));
 

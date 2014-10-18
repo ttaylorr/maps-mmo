@@ -1,3 +1,4 @@
 */target/
 *.bmp
 geojson/
+osm-api/node_modules/
