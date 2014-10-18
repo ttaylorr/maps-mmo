@@ -60,7 +60,7 @@ public class MainWindow {
 
         GamePanel gamePanel = new GamePanel(game);
         panel.add(gamePanel, "Game");
-        panel.add(new ConnectPanel(game), "Connect");
+        panel.add(new ConnectPanel(game, panel), "Connect");
 
         Timer timer = new Timer(1000 / 60, new TimerListener(game, gamePanel));
         timer.start();

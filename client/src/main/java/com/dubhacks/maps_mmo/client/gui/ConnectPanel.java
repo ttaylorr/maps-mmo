@@ -1,9 +1,6 @@
 package com.dubhacks.maps_mmo.client.gui;
 
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -26,7 +23,7 @@ public class ConnectPanel extends JPanel {
     /**
      * Create the panel.
      */
-    public ConnectPanel(final Game game) {
+    public ConnectPanel(final Game game, final JPanel cards) {
         this.game = game;
 
         GridBagLayout gridBagLayout = new GridBagLayout();
@@ -106,7 +103,9 @@ public class ConnectPanel extends JPanel {
                     game.connect(txtHostname.getText(), Integer.parseInt(txtPort.getText()), txtUsername.getText());
                 } catch (IOException e) {
                     System.err.println("ERROR connecting to server: " + e.getMessage());
+                    return;
                 }
+                ((CardLayout)cards.getLayout()).show(cards, "Game");
             }
         });
         GridBagConstraints gbc_btnConnect = new GridBagConstraints();
