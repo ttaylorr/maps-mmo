@@ -1,8 +1,6 @@
 package com.dubhacks.maps_mmo.client;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -18,8 +16,6 @@ import com.dubhacks.maps_mmo.packets.ConnectPacket;
 
 public class Game {
     private final EventManager eventManager;
-
-    private Rectangle bounds;
 
     private String connectingName;
     private SocketPlayer connectingPlayer;
@@ -55,14 +51,6 @@ public class Game {
         connectingPlayer.sendPacket(packet);
     }
 
-    public Rectangle getBounds() {
-        return bounds;
-    }
-
-    public void setBounds(Rectangle newBounds) {
-        bounds = newBounds;
-    }
-
     public Set<ClientPlayer> getPlayers() {
         return players;
     }
@@ -73,24 +61,30 @@ public class Game {
 
     public void setMap(IGameMap map) {
         this.map = map;
-        setBounds(new Rectangle(30, 30));
     }
 
     public void paint(Graphics2D g) {
         if (isPlaying()) {
-            setBounds(new Rectangle(getBounds().x, getBounds().y, (int)Math.ceil(g.getClipBounds().getWidth() / 32), (int)Math.ceil(g.getClipBounds().getHeight()/ 32)));
-            Rectangle b = getBounds();
-            for (int x = 0; x < b.width; x++) {
-                for (int y = 0; y < b.height; y++) {
-                    byte tile = map.get(b.x + x, b.y + y);
-                    BufferedImage image = GameAssets.getMapTile(tile);
-                    g.drawImage(image, null, 32 * x, 32 * y);
+            int tilesWidth = (int)Math.ceil(g.getClipBounds().getWidth() / 32);
+            int tilesHeight = (int)Math.ceil(g.getClipBounds().getHeight()/ 32);
+            int offsetX = localPlayer.getX() - tilesWidth / 2;
+            int offsetY = localPlayer.getY() - tilesHeight / 2;
+            for (int x = 0; x < tilesWidth; x++) {
+                for (int y = 0; y < tilesHeight; y++) {
+                    int finalX = x + offsetX;
+                    int finalY = y + offsetY;
+                    if (0 <= finalX && finalX < map.getWidth() &&
+                            0 <= finalY && finalY < map.getHeight()) {
+                        byte tile = map.get(finalX, finalY);
+                        BufferedImage image = GameAssets.getMapTile(tile);
+                        g.drawImage(image, null, 32 * x, 32 * y);
+                    }
                 }
             }
             for (ClientPlayer other : getPlayers()) {
-                g.drawImage(GameAssets.getOtherPlayerSprite(), null, 32 * other.getX(), 32 * other.getY());
+                g.drawImage(GameAssets.getOtherPlayerSprite(), null, 32 * (other.getX() - offsetX), 32 * (other.getY() - offsetY));
             }
-            g.drawImage(GameAssets.getPlayerSprite(), null, 32 * localPlayer.getX(), 32 * localPlayer.getY());
+            g.drawImage(GameAssets.getPlayerSprite(), null, 32 * (localPlayer.getX() - offsetX), 32 * (localPlayer.getY() - offsetY));
         } else {
             g.drawString("Waiting to connect...", 50, 50);
         }
@@ -164,29 +158,7 @@ public class Game {
         }
 
         if (dx != 0 || dy != 0) {
-            if (tryMoveBounds(dx, dy)) {
-                localPlayer.setLocation(localPlayer.getX() + dx, localPlayer.getY() + dy);
-            }
+            localPlayer.setLocation(localPlayer.getX() + dx, localPlayer.getY() + dy);
         }
-    }
-
-    private boolean tryMoveBounds(int dx, int dy) {
-        Rectangle newBounds = new Rectangle(bounds);
-        newBounds.x += dx;
-        newBounds.y += dy;
-        if (isValidBounds(newBounds)) {
-            bounds = newBounds;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean isValidBounds(Rectangle bounds) {
-        if (!isMapLoaded()) return false;
-        if (bounds.x < 0 || bounds.y < 0) return false;
-        if (bounds.x + bounds.width >= map.getWidth()) return false;
-        if (bounds.y + bounds.height >= map.getHeight()) return false;
-        return true;
     }
 }

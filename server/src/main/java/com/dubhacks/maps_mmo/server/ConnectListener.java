@@ -30,6 +30,7 @@ public class ConnectListener implements Listener {
 
         // add and broadcast to finalize connect
         ServerPlayer newPlayer = new ServerPlayer(player, nextPlayerId++, packet.name);
+        newPlayer.setLocation(server.getMap().getWidth() / 2, server.getMap().getHeight() / 2);
         server.getConnectionManager().addPlayer(newPlayer);
         server.getConnectionManager().broadcastPacket(playerAddFromPlayer(newPlayer));
     }
