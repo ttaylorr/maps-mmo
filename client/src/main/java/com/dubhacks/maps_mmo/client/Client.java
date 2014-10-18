@@ -13,13 +13,14 @@ import org.geojson.LngLatAlt;
 import com.dubhacks.map_mmo.net.NetworkDefaults;
 import com.dubhacks.map_mmo.net.SocketPlayer;
 import com.dubhacks.maps_mmo.event.EventManager;
+import com.dubhacks.maps_mmo.packets.ConnectPacket;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Client {
     public static void main(String[] args) throws JsonParseException, IOException {
         long start = System.currentTimeMillis();
-        final FeatureCollection featureCollection = new ObjectMapper().readValue(new File("seattle_washington-roads.geojson"), FeatureCollection.class);
+        final FeatureCollection featureCollection = new ObjectMapper().readValue(new File("seattle_washington-roads-culled.geojson"), FeatureCollection.class);
         System.out.println("Parsed json in " + (System.currentTimeMillis() - start) + "ms");
 
         Bounds bounds = Bounds.calculateBounds(featureCollection);
@@ -39,7 +40,13 @@ public class Client {
 
         Socket socket = new Socket();
         socket.connect(new InetSocketAddress("localhost", NetworkDefaults.DEFAULT_PORT));
-        game.setConnectingPlayer(new SocketPlayer(socket));
+
+        SocketPlayer connectingPlayer = new SocketPlayer(socket);
+        game.setConnectingPlayer(connectingPlayer);
+
+        ConnectPacket connectPacket = new ConnectPacket();
+        connectPacket.name = "Test User";
+        connectingPlayer.sendPacket(connectPacket);
     }
 
     private static String toString(LngLatAlt p) {

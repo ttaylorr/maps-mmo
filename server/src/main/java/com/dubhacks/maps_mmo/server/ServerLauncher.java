@@ -13,7 +13,9 @@ public class ServerLauncher {
         ServerSocket serverSocket = new ServerSocket(NetworkDefaults.DEFAULT_PORT);
         EventManager eventManager = new EventManager();
         final ServerConnectionManager connManager = new ServerConnectionManager(serverSocket, eventManager);
-        Server server = new Server(connManager);
+        Server server = new Server(connManager, eventManager);
+
+        eventManager.addListener(new ConnectListener(server));
 
         // client accept thread
         new Thread(new Runnable() {

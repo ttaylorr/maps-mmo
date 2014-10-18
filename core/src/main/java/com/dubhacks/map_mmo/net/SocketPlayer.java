@@ -12,54 +12,73 @@ import com.dubhacks.maps_mmo.packets.Packet;
 public class SocketPlayer {
     private final Socket socket;
     private final SocketAddress remoteAddress;
-    private final ObjectInputStream is;
+    private ObjectInputStream is; // otherwise we have to create in the constructor where it deadlocks
     private final ObjectOutputStream os;
     private final ConcurrentLinkedQueue<Packet> incomingPackets;
 
     public SocketPlayer(Socket socket) throws IOException {
         this.socket = socket;
-        this.remoteAddress = socket.getRemoteSocketAddress();
-        this.is = new ObjectInputStream(socket.getInputStream());
-        this.os = new ObjectOutputStream(socket.getOutputStream());
-        this.incomingPackets = new ConcurrentLinkedQueue<>();
+        remoteAddress = socket.getRemoteSocketAddress();
+        os = new ObjectOutputStream(socket.getOutputStream());
+        os.flush();
+        incomingPackets = new ConcurrentLinkedQueue<>();
         new Thread(new Reader()).start();
     }
 
     public void sendPacket(Packet packet) {
+        System.out.println("Sending packet of type: " + packet.getClass().getSimpleName());
         try {
-            this.os.writeObject(packet);
+            os.writeObject(packet);
+            os.flush();
         } catch (IOException e) {
-            System.err.println("ERROR: Failed to write packet to " + this.remoteAddress + ": " + e.getMessage());
+            System.err.println("ERROR: Failed to write packet to " + remoteAddress + ": " + e.getMessage());
         }
     }
 
     public boolean hasPacket() {
-        return !this.incomingPackets.isEmpty();
+        return !incomingPackets.isEmpty();
     }
 
     public Packet getNextPacket() {
-        return this.incomingPackets.poll();
+        return incomingPackets.poll();
     }
 
     public Socket socket() {
-        return this.socket;
+        return socket;
+    }
+
+    public void disconnect() {
+        try {
+            socket.close();
+        } catch (IOException e) {
+            System.err.println("ERROR disconnecting client " + remoteAddress + ": " + e.getMessage());
+        }
     }
 
     private class Reader implements Runnable {
         @Override
         public void run() {
-            while (!SocketPlayer.this.socket.isInputShutdown()) {
+            try {
+                is = new ObjectInputStream(socket.getInputStream());
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+
+            while (!socket.isClosed()) {
                 try {
-                    Object read = SocketPlayer.this.is.readObject();
+                    Object read = is.readObject();
                     if (read instanceof Packet) {
-                        SocketPlayer.this.incomingPackets.add((Packet)read);
+                        System.out.println("Received packet of type: " + read.getClass().getSimpleName());
+                        incomingPackets.add((Packet)read);
                     } else {
-                        System.err.println("ERROR: Received object from " + SocketPlayer.this.remoteAddress + " that is not a Packet");
+                        System.err.println("ERROR: Received object from " + remoteAddress + " that is not a Packet");
                     }
                 } catch (IOException e) {
-                    System.err.println("ERROR: IO Exception while reading from " + SocketPlayer.this.remoteAddress + ": " + e.getMessage());
+                    System.err.println("ERROR: IO Exception while reading from " + remoteAddress + ": " + e.getMessage());
+                    disconnect();
                 } catch (ClassNotFoundException e) {
-                    System.err.println("ERROR: Unknown object received from " + SocketPlayer.this.remoteAddress + ": " + e.getMessage());
+                    System.err.println("ERROR: Unknown object received from " + remoteAddress + ": " + e.getMessage());
                 }
             }
         }

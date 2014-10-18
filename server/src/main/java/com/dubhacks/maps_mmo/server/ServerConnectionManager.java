@@ -25,6 +25,7 @@ public class ServerConnectionManager {
     public void accept() {
         try {
             Socket clientSocket = serverSocket.accept();
+            System.out.println("Accepting client from: " + clientSocket.getRemoteSocketAddress());
             SocketPlayer player = new SocketPlayer(clientSocket);
             incomingSockets.put(clientSocket, player);
         } catch (IOException e) {
