@@ -3,6 +3,7 @@ package com.dubhacks.maps_mmo.core.map;
 import com.dubhacks.maps_mmo.core.IGameMap;
 
 public class GameMap implements IGameMap {
+
     private static final long serialVersionUID = 1L;
 
     public static final byte BLANK_TILE = 1;
@@ -13,7 +14,24 @@ public class GameMap implements IGameMap {
     public static final byte ROAD_MEDIUM = 16;
     public static final byte ROAD_LARGE  = 17;
 
-    public static final byte BUILDING_PLACEHOLDER = 50;
+    public static final byte BUILDING_PLACEHOLDER    = 49;
+    public static final byte BUILDING_OTHER          = 50;
+    public static final byte BUILDING_GAS_STATION    = 51;
+    public static final byte BUILDING_GROCERY        = 52;
+    public static final byte BUILDING_LIBRARY        = 53;
+    public static final byte BUILDING_PUBLIC_RESTOOM = 54;
+    public static final byte BUILDING_FAST_FOOD      = 55;
+    public static final byte BUILDING_CHURCH         = 56;
+    public static final byte BUILDING_POST_OFFICE    = 57;
+    public static final byte BUILDING_DRUGSTORE      = 58;
+    public static final byte BUILDING_PUBLIC_STORAGE = 59;
+    public static final byte BUILDING_HOTEL          = 60;
+    public static final byte BUILDING_SCHOOL         = 61;
+    public static final byte BUILDING_RESTAURANT     = 62;
+    public static final byte BUILDING_GYM            = 63;
+    public static final byte BUILDING_BANK           = 64;
+    public static final byte BUILDING_COFFEE_SHOP    = 65;
+    public static final byte BUILDING_PIZZA          = 66;
 
     private final int width;
     private final int height;
