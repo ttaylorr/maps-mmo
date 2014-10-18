@@ -33,7 +33,7 @@ public class GameAssets {
         character_single = ImageIO.read(new File("src/main/resources/character_single.png"));
         character_brunette_single = ImageIO.read(new File("src/main/resources/character_brunette_single.png"));
 
-        blank = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+        blank = terrain.getSubimage(384, 352, 32, 32);
 
         tiles = new BufferedImage[256];
         tiles[GameMap.BLANK_TILE] = blank;
