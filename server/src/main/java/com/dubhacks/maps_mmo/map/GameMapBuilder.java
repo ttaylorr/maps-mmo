@@ -13,6 +13,7 @@ import org.geojson.*;
 
 public class GameMapBuilder {
     private final Multimap<GeoJsonFileType, File> files = TreeMultimap.create();
+    private final Map<File, FeatureCollection> features = new HashMap<>();
     private final double resolution;
 
     private MapInfo mapInfo;
@@ -41,6 +42,8 @@ public class GameMapBuilder {
     }
 
     public GameMap process() throws IOException {
+        this.loadFeatures();
+
         GeoJsonFileType[] types = GeoJsonFileType.values();
         for (GeoJsonFileType type : types) {
             if (!this.files.containsKey(type)) {
@@ -68,7 +71,7 @@ public class GameMapBuilder {
             System.out.print("Starting render of type: " + renderer.getClass().getSimpleName() + "...");
             long start = System.currentTimeMillis();
             for (File file : this.files.get(renderer.getFileType())) {
-                renderer.render(new ObjectMapper().readValue(file, FeatureCollection.class).getFeatures());
+                renderer.render(this.features.get(file).getFeatures());
             }
             System.out.print(" (Finished in "+(System.currentTimeMillis() - start)+"ms)\n");
         }
@@ -79,12 +82,30 @@ public class GameMapBuilder {
         return gameMap;
     }
 
+    private void loadFeatures() {
+        System.out.println("Loading features...");
+        long start = System.currentTimeMillis();
+
+        for (File file : this.files.values()) {
+            try {
+                this.features.put(file, new ObjectMapper().readValue(file, FeatureCollection.class));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        System.out.println("Finished loading all features... (in "+(System.currentTimeMillis() - start)+"ms)");
+    }
+
     private MapInfo calculateMapParameters() throws IOException {
         MinMaxLngLat mm = new MinMaxLngLat();
 
         List<Classifier> classifiers = Arrays.asList(new RoadClassifier(), new WaterClassifier(), new LandUsageClassifier(), new BuildingClassifier());
         for (Classifier classifier : classifiers) {
-            classifier.classifyFiles(mm, this.files.get(classifier.getType()));
+            List<File> files = new ArrayList<>(this.files.get(classifier.getType()));
+            for (File file : files) {
+                classifier.classify(mm, this.features.get(file).getFeatures());
+            }
         }
 
         return new MapInfo(mm, this.resolution);

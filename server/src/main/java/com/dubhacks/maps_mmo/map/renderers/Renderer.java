@@ -90,8 +90,8 @@ public abstract class Renderer {
     }
 
     protected void write(BufferedImage image) {
-        for (int xPos = 0; xPos < this.map.info.width; xPos++) {
-            for (int yPos = 0; yPos < this.map.info.width; yPos++) {
+        for (int xPos = 0; xPos < image.getWidth(); xPos++) {
+            for (int yPos = 0; yPos < image.getHeight(); yPos++) {
                 if (image.getRGB(xPos, yPos) == BINARY_IMAGE_SET) {
                     this.map.set(xPos, yPos, this.getFileType());
                 }

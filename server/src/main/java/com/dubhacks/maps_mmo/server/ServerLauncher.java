@@ -24,6 +24,8 @@ public class ServerLauncher {
         GameMap map = gmb.process();
         map.saveAsImage(new File("gamemap.png"));
 
+        System.out.println("Starting server");
+
         ServerSocket serverSocket = new ServerSocket(NetworkDefaults.DEFAULT_PORT);
         EventManager eventManager = new EventManager();
         final ServerConnectionManager connManager = new ServerConnectionManager(serverSocket, eventManager);
