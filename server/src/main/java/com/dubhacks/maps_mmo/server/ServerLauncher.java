@@ -13,8 +13,8 @@ import com.dubhacks.maps_mmo.core.IGameMap;
 import com.dubhacks.maps_mmo.core.map.GameMap;
 import com.dubhacks.maps_mmo.event.EventManager;
 import com.dubhacks.maps_mmo.map.GameMapBuilder;
-import com.dubhacks.maps_mmo.map.GeoJsonFileType;
 import com.dubhacks.maps_mmo.net.NetworkDefaults;
+import com.dubhacks.maps_mmo.util.GoogleMaps;
 
 public class ServerLauncher {
     public static final int TICK_FREQUENCY = 20; // ticks per second
@@ -22,7 +22,11 @@ public class ServerLauncher {
     public static void main(String[] args) throws IOException {
         GameMapBuilder gmb = new GameMapBuilder();
 
-        gmb.source("http://localhost:3000/center/?x=42.541507&y=-83.221497&r=0.05");
+        String place = "663 W Frank Street, Birmingham, MI";
+        GoogleMaps.LatLng loc = GoogleMaps.fromString(place);
+        double rad = 0.01;
+
+        gmb.source("http://localhost:3000/center/?x="+loc.lat+"&y="+loc.lng+"&r="+rad);
 
         GameMap map = gmb.process();
         saveMapAsImage(map, new File("gamemap.png"));
