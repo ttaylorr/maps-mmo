@@ -1,5 +1,9 @@
 package com.dubhacks.maps_mmo.map;
 
+import com.dubhacks.maps_mmo.core.map.MinMaxLngLat;
+import com.dubhacks.maps_mmo.core.map.MapInfo;
+import com.dubhacks.maps_mmo.core.IGameMap;
+import com.dubhacks.maps_mmo.core.map.GameMap;
 import com.dubhacks.maps_mmo.map.classifiers.*;
 import com.dubhacks.maps_mmo.map.renderers.*;
 import java.io.File;
@@ -9,6 +13,9 @@ import java.util.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.TreeMultimap;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 import org.geojson.*;
 
 public class GameMapBuilder {
@@ -79,6 +86,8 @@ public class GameMapBuilder {
         this.tiles = null;
         this.mapInfo = null;
 
+        this.unloadFeatures();
+
         return gameMap;
     }
 
@@ -96,6 +105,10 @@ public class GameMapBuilder {
 
         System.out.println("Finished loading all features... (in "+(System.currentTimeMillis() - start)+"ms)");
     }
+    
+    private void unloadFeatures() {
+        this.features.clear();
+    }
 
     private MapInfo calculateMapParameters() throws IOException {
         MinMaxLngLat mm = new MinMaxLngLat();
@@ -110,4 +123,5 @@ public class GameMapBuilder {
 
         return new MapInfo(mm, this.resolution);
     }
+    
 }

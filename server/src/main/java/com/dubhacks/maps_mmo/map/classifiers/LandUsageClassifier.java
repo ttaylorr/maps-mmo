@@ -1,7 +1,7 @@
 package com.dubhacks.maps_mmo.map.classifiers;
 
 import com.dubhacks.maps_mmo.map.GeoJsonFileType;
-import com.dubhacks.maps_mmo.map.MinMaxLngLat;
+import com.dubhacks.maps_mmo.core.map.MinMaxLngLat;
 import org.geojson.*;
 
 import java.util.List;
@@ -17,11 +17,11 @@ public class LandUsageClassifier extends Classifier {
         for (Feature landUsage : features) {
             GeoJsonObject geometry = landUsage.getGeometry();
             if (geometry instanceof MultiPolygon) {
-                mm.put((MultiPolygon)geometry);
+                put(mm, (MultiPolygon)geometry);
             } else if (geometry instanceof LineString) {
-                mm.put((LineString)geometry);
+                put(mm, (LineString)geometry);
             } else if (geometry instanceof Polygon) {
-                mm.put((Polygon)geometry);
+                put(mm, (Polygon)geometry);
             } else {
                 throw new RuntimeException("land usage encountered with geometry: " + geometry.getClass().getCanonicalName() + " (type:" + landUsage.getProperty("type") + ")");
             }

@@ -1,6 +1,6 @@
 package com.dubhacks.maps_mmo.map.renderers;
 
-import com.dubhacks.maps_mmo.map.GameMap;
+import com.dubhacks.maps_mmo.core.map.GameMap;
 import com.dubhacks.maps_mmo.map.GeoJsonFileType;
 import org.geojson.*;
 

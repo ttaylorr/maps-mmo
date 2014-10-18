@@ -1,4 +1,4 @@
-package com.dubhacks.maps_mmo.map;
+package com.dubhacks.maps_mmo.core.map;
 
 public class MinMax {
     private Double min;

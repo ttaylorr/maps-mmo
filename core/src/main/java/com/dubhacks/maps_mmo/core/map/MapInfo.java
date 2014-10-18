@@ -1,6 +1,7 @@
-package com.dubhacks.maps_mmo.map;
+package com.dubhacks.maps_mmo.core.map;
 
 public class MapInfo {
+    
     public final MinMax latitude;
     public final MinMax longitude;
 

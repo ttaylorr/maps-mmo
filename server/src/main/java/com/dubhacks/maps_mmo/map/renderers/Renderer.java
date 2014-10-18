@@ -1,8 +1,8 @@
 package com.dubhacks.maps_mmo.map.renderers;
 
-import com.dubhacks.maps_mmo.map.GameMap;
+import com.dubhacks.maps_mmo.core.map.GameMap;
 import com.dubhacks.maps_mmo.map.GeoJsonFileType;
-import com.dubhacks.maps_mmo.map.MapInfo;
+import com.dubhacks.maps_mmo.core.map.MapInfo;
 import org.geojson.*;
 import org.geojson.Polygon;
 
@@ -93,7 +93,7 @@ public abstract class Renderer {
         for (int xPos = 0; xPos < image.getWidth(); xPos++) {
             for (int yPos = 0; yPos < image.getHeight(); yPos++) {
                 if (image.getRGB(xPos, yPos) == BINARY_IMAGE_SET) {
-                    this.map.set(xPos, yPos, this.getFileType());
+                    this.map.set(xPos, yPos, this.getFileType().asByte());
                 }
             }
         }

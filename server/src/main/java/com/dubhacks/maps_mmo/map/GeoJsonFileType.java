@@ -1,5 +1,6 @@
 package com.dubhacks.maps_mmo.map;
 
+import com.dubhacks.maps_mmo.core.map.GameMap;
 import java.awt.*;
 
 public enum GeoJsonFileType {

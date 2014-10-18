@@ -1,7 +1,7 @@
 package com.dubhacks.maps_mmo.map.classifiers;
 
 import com.dubhacks.maps_mmo.map.GeoJsonFileType;
-import com.dubhacks.maps_mmo.map.MinMaxLngLat;
+import com.dubhacks.maps_mmo.core.map.MinMaxLngLat;
 import org.geojson.Feature;
 import org.geojson.GeoJsonObject;
 import org.geojson.LineString;
@@ -19,7 +19,7 @@ public class RoadClassifier extends Classifier {
         for (Feature road : features) {
             GeoJsonObject geometry = road.getGeometry();
             if (geometry instanceof LineString) {
-                mm.put((LineString) geometry);
+                put(mm, (LineString) geometry);
             } else {
                 throw new RuntimeException("road encountered with geometry: " + geometry.getClass().getCanonicalName());
             }

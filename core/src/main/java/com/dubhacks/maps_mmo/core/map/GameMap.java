@@ -1,12 +1,6 @@
-package com.dubhacks.maps_mmo.map;
+package com.dubhacks.maps_mmo.core.map;
 
 import com.dubhacks.maps_mmo.core.IGameMap;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 public class GameMap implements IGameMap {
     
@@ -47,8 +41,8 @@ public class GameMap implements IGameMap {
         return this.tiles[y][x];
     }
 
-    public void set(int x, int y, GeoJsonFileType type) {
-        this.tiles[y][x] = type.asByte();
+    public void set(int x, int y, byte b) {
+        this.tiles[y][x] = b;
     }
 
     @Override
@@ -56,23 +50,4 @@ public class GameMap implements IGameMap {
         return tile == ROAD_SMALL || tile == ROAD_MEDIUM || tile == ROAD_LARGE;
     }
 
-    public void saveAsImage(File out) throws IOException {
-        BufferedImage image = new BufferedImage(this.tiles.length, this.tiles[0].length, BufferedImage.TYPE_BYTE_GRAY);
-        Graphics2D g = image.createGraphics();
-
-        for (int x = 0; x < this.tiles.length; x++) {
-            for (int y = 0; y < this.tiles[x].length; y++) {
-                byte b = this.tiles[x][y];
-                if (b != 0) {
-                    GeoJsonFileType type = GeoJsonFileType.fromByte(b);
-
-                    g.setColor(type.getColor());
-                    g.drawLine(y, x, y, x);
-                }
-            }
-        }
-
-        g.dispose();
-        ImageIO.write(image, "png", out);
-    }
 }
