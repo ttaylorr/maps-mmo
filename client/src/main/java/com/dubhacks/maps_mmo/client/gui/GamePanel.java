@@ -8,9 +8,9 @@ import java.awt.event.ComponentEvent;
 import javax.swing.JPanel;
 
 import com.dubhacks.maps_mmo.client.Game;
-import com.dubhacks.maps_mmo.client.MapView;
 
 public class GamePanel extends JPanel {
+
     private final Game game;
 
     /**
@@ -32,6 +32,7 @@ public class GamePanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        game.paint(new MapView((Graphics2D)g, game.getBounds()));
+        this.game.paint((Graphics2D)g);
     }
+
 }
