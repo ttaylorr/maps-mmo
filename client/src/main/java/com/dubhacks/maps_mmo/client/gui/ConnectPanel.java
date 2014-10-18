@@ -13,8 +13,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import com.dubhacks.map_mmo.net.NetworkDefaults;
 import com.dubhacks.maps_mmo.client.Game;
+import com.dubhacks.maps_mmo.net.NetworkDefaults;
 
 public class ConnectPanel extends JPanel {
     private final Game game;
