@@ -1,4 +1,4 @@
-package com.dubhacks.map_mmo.net;
+package com.dubhacks.maps_mmo.net;
 
 import java.io.EOFException;
 import java.io.IOException;

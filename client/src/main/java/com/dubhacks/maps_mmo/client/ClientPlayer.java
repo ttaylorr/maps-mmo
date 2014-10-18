@@ -1,6 +1,6 @@
 package com.dubhacks.maps_mmo.client;
 
-import com.dubhacks.map_mmo.net.SocketPlayer;
+import com.dubhacks.maps_mmo.net.SocketPlayer;
 
 public class ClientPlayer {
     private final SocketPlayer socketPlayer;

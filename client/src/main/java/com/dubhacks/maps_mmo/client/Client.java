@@ -6,8 +6,8 @@ import java.net.Socket;
 
 import javax.swing.JFrame;
 
-import com.dubhacks.map_mmo.net.NetworkDefaults;
-import com.dubhacks.map_mmo.net.SocketPlayer;
+import com.dubhacks.maps_mmo.net.NetworkDefaults;
+import com.dubhacks.maps_mmo.net.SocketPlayer;
 import com.dubhacks.maps_mmo.event.EventManager;
 import com.dubhacks.maps_mmo.packets.ConnectPacket;
 import com.fasterxml.jackson.core.JsonParseException;

@@ -3,7 +3,7 @@ package com.dubhacks.maps_mmo.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 
-import com.dubhacks.map_mmo.net.NetworkDefaults;
+import com.dubhacks.maps_mmo.net.NetworkDefaults;
 import com.dubhacks.maps_mmo.event.EventManager;
 
 public class ServerLauncher {
