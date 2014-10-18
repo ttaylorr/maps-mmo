@@ -14,24 +14,24 @@ import java.io.IOException;
 import java.util.List;
 
 public class RoadRenderer extends Renderer {
-    public RoadRenderer(GameMapBuilder.MapParameters mapParameters) {
-        super(mapParameters);
+    public RoadRenderer(GameMap map) {
+        super(map);
     }
 
     @Override
-    public void render(byte[][] tiles, List<Feature> features) throws IOException {
+    public void render(List<Feature> features) throws IOException {
         BufferedImage roadImage = this.allocateImage();
         for (Feature road : features) {
             GeoJsonObject geometry = road.getGeometry();
             if (geometry instanceof LineString) {
-                draw((LineString) geometry, roadImage, this.mapParameters);
+                draw((LineString) geometry, roadImage);
             }
         }
 
-        for (int x = 0; x < mapParameters.width; x++) {
-            for (int y = 0; y < mapParameters.height; y++) {
+        for (int x = 0; x < this.map.info.width; x++) {
+            for (int y = 0; y < this.map.info.height; y++) {
                 if (roadImage.getRGB(x, y) == BINARY_IMAGE_SET) {
-                    tiles[y][x] = GameMap.ROAD_MEDIUM;
+                    this.map.tiles[y][x] = GameMap.ROAD_MEDIUM;
                 }
             }
         }

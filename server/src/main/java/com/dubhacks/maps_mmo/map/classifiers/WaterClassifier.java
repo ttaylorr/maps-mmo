@@ -1,7 +1,7 @@
 package com.dubhacks.maps_mmo.map.classifiers;
 
-import com.dubhacks.maps_mmo.map.GameMapBuilder;
 import com.dubhacks.maps_mmo.map.GeoJsonFileType;
+import com.dubhacks.maps_mmo.map.MinMaxLngLat;
 import org.geojson.*;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public class WaterClassifier extends Classifier {
     }
 
     @Override
-    public void classify(GameMapBuilder.MinMaxLngLat mm, List<Feature> features) {
+    public void classify(MinMaxLngLat mm, List<Feature> features) {
         for (Feature waterArea : features) {
             GeoJsonObject geometry = waterArea.getGeometry();
             if (geometry instanceof Polygon) {

@@ -1,7 +1,6 @@
 package com.dubhacks.maps_mmo.map.renderers;
 
 import com.dubhacks.maps_mmo.map.GameMap;
-import com.dubhacks.maps_mmo.map.GameMapBuilder;
 import com.dubhacks.maps_mmo.map.GeoJsonFileType;
 import org.geojson.*;
 
@@ -12,26 +11,26 @@ import java.io.IOException;
 import java.util.List;
 
 public class WaterRenderer extends Renderer {
-    public WaterRenderer(GameMapBuilder.MapParameters mapParameters) {
-        super(mapParameters);
+    public WaterRenderer(GameMap map) {
+        super(map);
     }
 
     @Override
-    public void render(byte[][] tiles, List<Feature> features) throws IOException {
+    public void render(List<Feature> features) throws IOException {
         BufferedImage waterImage = this.allocateImage();
         for (Feature waterArea : features) {
             GeoJsonObject geometry = waterArea.getGeometry();
             if (geometry instanceof Polygon) {
-                this.draw((Polygon) geometry, waterImage, this.mapParameters);
+                this.draw((Polygon) geometry, waterImage);
             } else if (geometry instanceof LineString) {
-                this.draw((LineString) geometry, waterImage, this.mapParameters);
+                this.draw((LineString) geometry, waterImage);
             }
         }
 
-        for (int x = 0; x < mapParameters.width; x++) {
-            for (int y = 0; y < mapParameters.height; y++) {
+        for (int x = 0; x < this.map.info.width; x++) {
+            for (int y = 0; y < this.map.info.height; y++) {
                 if (waterImage.getRGB(x, y) == BINARY_IMAGE_SET) {
-                    tiles[y][x] = GameMap.TERRAIN_WATER;
+                    this.map.tiles[y][x] = GameMap.TERRAIN_WATER;
                 }
             }
         }

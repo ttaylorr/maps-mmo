@@ -16,10 +16,12 @@ public class GameMap implements IGameMap {
     private final int width;
     private final int height;
     
-    private final byte[][] tiles;
-    
-    GameMap(byte[][] tiles) {
+    public final byte[][] tiles;
+    public final MapInfo info;
+
+    public GameMap(byte[][] tiles, MapInfo info) {
         this.tiles = tiles;
+        this.info = info;
         this.height = tiles.length;
         this.width = tiles[0].length;
     }

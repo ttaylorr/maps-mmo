@@ -1,7 +1,6 @@
 package com.dubhacks.maps_mmo.map.renderers;
 
 import com.dubhacks.maps_mmo.map.GameMap;
-import com.dubhacks.maps_mmo.map.GameMapBuilder;
 import com.dubhacks.maps_mmo.map.GeoJsonFileType;
 import org.geojson.*;
 
@@ -12,28 +11,28 @@ import java.io.IOException;
 import java.util.List;
 
 public class BuildingRenderer extends Renderer {
-    public BuildingRenderer(GameMapBuilder.MapParameters mapParameters) {
-        super(mapParameters);
+    public BuildingRenderer(GameMap map) {
+        super(map);
     }
 
     @Override
-    public void render(byte[][] tiles, List<Feature> features) throws IOException {
+    public void render(List<Feature> features) throws IOException {
         BufferedImage buildingImage = this.allocateImage();
         for (Feature building : features) {
             GeoJsonObject geometry = building.getGeometry();
             if (geometry instanceof MultiPolygon) {
-                draw((MultiPolygon)geometry, buildingImage, this.mapParameters);
+                draw((MultiPolygon)geometry, buildingImage);
             } else if (geometry instanceof Polygon) {
-                draw((Polygon)geometry, buildingImage, this.mapParameters);
+                draw((Polygon)geometry, buildingImage);
             } else if (geometry instanceof LineString) {
-                draw((LineString)geometry, buildingImage, this.mapParameters);
+                draw((LineString)geometry, buildingImage);
             }
         }
 
-        for (int x = 0; x < mapParameters.width; x++) {
-            for (int y = 0; y < mapParameters.height; y++) {
+        for (int x = 0; x < this.map.info.width; x++) {
+            for (int y = 0; y < this.map.info.height; y++) {
                 if (buildingImage.getRGB(x, y) == BINARY_IMAGE_SET) {
-                    tiles[y][x] = GameMap.BUILDING_PLACEHOLDER;
+                    this.map.tiles[y][x] = GameMap.BUILDING_PLACEHOLDER;
                 }
             }
         }

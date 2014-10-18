@@ -17,10 +17,10 @@ public class GameMapBuilder {
     private final Map<GeoJsonFileType, List<File>> files = new TreeMap<>();
 
     private final double resolution;
-    
-    private MapParameters mapParameters;
+
+    private MapInfo mapInfo;
     private byte[][] tiles;
-    
+
     public GameMapBuilder() {
         this(0.0001);
     }
@@ -57,37 +57,37 @@ public class GameMapBuilder {
         }
 
         System.out.print("Calculating map parameters...");
-        this.mapParameters = this.calculateMapParameters();
-        System.out.printf("width: %d    height: %d\n", mapParameters.width, mapParameters.height);
-        System.out.printf("LNG[x]  min:%10.6f  max:%10.6f\n", mapParameters.latitude.getMin(), mapParameters.latitude.getMax());
-        System.out.printf("LAT[y]  min:%10.6f  max:%10.6f\n", mapParameters.longitude.getMin(), mapParameters.longitude.getMax());
+        this.mapInfo = this.calculateMapParameters();
+        System.out.printf("width: %d    height: %d\n", mapInfo.width, mapInfo.height);
+        System.out.printf("LNG[x]  min:%10.6f  max:%10.6f\n", mapInfo.latitude.getMin(), mapInfo.latitude.getMax());
+        System.out.printf("LAT[y]  min:%10.6f  max:%10.6f\n", mapInfo.longitude.getMin(), mapInfo.longitude.getMax());
         System.out.println();
 
         System.out.println("Allocating map...");
-        this.tiles = new byte[mapParameters.height][mapParameters.width];
+        this.tiles = new byte[mapInfo.height][mapInfo.width];
+        GameMap gameMap = new GameMap(this.tiles, this.mapInfo);
 
         List<Renderer> renderers = new ArrayList<>();
-        renderers.add(new BuildingRenderer(mapParameters));
-        renderers.add(new WaterRenderer(mapParameters));
-        renderers.add(new RoadRenderer(mapParameters));
+        renderers.add(new BuildingRenderer(gameMap));
+        renderers.add(new WaterRenderer(gameMap));
+        renderers.add(new RoadRenderer(gameMap));
 
         for (Renderer renderer : renderers) {
             System.out.print("Starting render of type: " + renderer.getClass().getSimpleName() + "...");
             long start = System.currentTimeMillis();
             for (File file : this.files.get(renderer.getFileType())) {
-                renderer.render(tiles, new ObjectMapper().readValue(file, FeatureCollection.class).getFeatures());
+                renderer.render(new ObjectMapper().readValue(file, FeatureCollection.class).getFeatures());
             }
             System.out.print(" (Finished in "+(System.currentTimeMillis() - start)+"ms)\n");
         }
 
-        GameMap gameMap = new GameMap(this.tiles);
         this.tiles = null;
-        this.mapParameters = null;
+        this.mapInfo = null;
 
         return gameMap;
     }
 
-    private MapParameters calculateMapParameters() throws IOException {
+    private MapInfo calculateMapParameters() throws IOException {
         MinMaxLngLat mm = new MinMaxLngLat();
 
         List<Classifier> classifiers = Arrays.asList(new RoadClassifier(), new WaterClassifier(), new LandUsageClassifier(), new BuildingClassifier());
@@ -95,103 +95,9 @@ public class GameMapBuilder {
             classifier.classifyFiles(mm, this.files.get(classifier.getType()));
         }
 
-        return new MapParameters(mm, this.resolution);
+        return new MapInfo(mm, this.resolution);
     }
 
-    public static class MapParameters {
-        public final MinMax latitude;
-        public final MinMax longitude;
-
-        public final int width;
-        public final int height;
-
-        public MapParameters(MinMaxLngLat mm, double resolution) {
-            this.latitude = mm.getLatitude();
-            this.longitude = mm.getLongitude();
-            
-            this.height = (int) (this.latitude.getRange() / resolution);
-            this.width = (int) (this.longitude.getRange() / resolution);
-        }
-    }
-    
-    public static class MinMax {
-        private Double min;
-        private Double max;
-        
-        public MinMax() {
-            this.min = null;
-            this.max = null;
-        }
-        
-        public double getMin() {
-            return this.min;
-        }
-        
-        public double getMax() {
-            return this.max;
-        }
-        
-        public double getRange() {
-            return this.max - this.min;
-        }
-        
-        public void put(double d) {
-            if (this.min == null) {
-                this.min = d;
-            } else if (d < this.min) {
-                this.min = d;
-            }
-            
-            if (this.max == null) {
-                this.max = d;
-            } else if (d > this.max) {
-                this.max = d;
-            }
-        }
-        
-    }
-    
-    public static class MinMaxLngLat {
-        private final MinMax lng = new MinMax();
-        private final MinMax lat = new MinMax();
-        
-        public MinMax getLongitude() {
-            return this.lng;
-        }
-        
-        public MinMax getLatitude() {
-            return this.lat;
-        }
-        
-        public void put(LngLatAlt point) {
-            this.lng.put(point.getLongitude());
-            this.lat.put(point.getLatitude());
-        }
-        
-        public void put(Polygon poly) {
-            for (LngLatAlt point : poly.getExteriorRing()) {
-                this.put(point);
-            }
-        }
-        
-        public void put(MultiPolygon multiPoly) {
-            for (List<List<LngLatAlt>> poly : multiPoly.getCoordinates()) {
-                for (List<LngLatAlt> ring : poly) {
-                    for (LngLatAlt point : ring) {
-                        this.put(point);
-                    }
-                }
-            }
-        }
-        
-        public void put(LineString line) {
-            for (LngLatAlt point : line.getCoordinates()) {
-                this.put(point);
-            }
-        }
-        
-    }
-    
     public static void main(String[] args) throws IOException, InterruptedException {
         GameMapBuilder gmb = new GameMapBuilder();
 

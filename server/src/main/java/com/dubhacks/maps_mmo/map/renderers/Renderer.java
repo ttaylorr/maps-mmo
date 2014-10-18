@@ -1,7 +1,8 @@
 package com.dubhacks.maps_mmo.map.renderers;
 
-import com.dubhacks.maps_mmo.map.GameMapBuilder;
+import com.dubhacks.maps_mmo.map.GameMap;
 import com.dubhacks.maps_mmo.map.GeoJsonFileType;
+import com.dubhacks.maps_mmo.map.MapInfo;
 import org.geojson.*;
 
 import java.awt.*;
@@ -13,46 +14,43 @@ import java.util.*;
 import java.util.List;
 
 public abstract class Renderer {
-    protected static final LngLatAlt CENTER = new LngLatAlt(47.653510, -122.305728); // current location
-    protected static final double RADIUS = 0.01;
-
     protected static final int BINARY_IMAGE_SET = 0xffffffff;
 
-    protected final GameMapBuilder.MapParameters mapParameters;
+    protected final GameMap map;
 
-    public Renderer(GameMapBuilder.MapParameters mapParameters) {
-        this.mapParameters = mapParameters;
+    public Renderer(GameMap map) {
+        this.map = map;
     }
 
-    public abstract void render(byte[][] tiles, List<Feature> features) throws IOException;
+    public abstract void render(List<Feature> features) throws IOException;
 
     public abstract GeoJsonFileType getFileType();
 
     protected BufferedImage allocateImage() {
-        return new BufferedImage(this.mapParameters.width, this.mapParameters.height, BufferedImage.TYPE_BYTE_BINARY);
+        return new BufferedImage(this.map.info.width, this.map.info.height, BufferedImage.TYPE_BYTE_BINARY);
     }
 
-    protected void draw(LineString line, BufferedImage image, GameMapBuilder.MapParameters params) {
-        draw(line, 1, image, params);
+    protected void draw(LineString line, BufferedImage image) {
+        draw(line, 1, image);
     }
 
-    protected void draw(LineString line, float width, BufferedImage image, GameMapBuilder.MapParameters params) {
+    protected void draw(LineString line, float width, BufferedImage image) {
         Graphics2D g = image.createGraphics();
         g.setStroke(new BasicStroke(width));
         List<LngLatAlt> coords = line.getCoordinates();
         for (int i = 0; i < coords.size() - 1; i++) {
-            Point start = normalize(coords.get(i), params);
-            Point end = normalize(coords.get(i + 1), params);
+            Point start = normalize(coords.get(i), this.map.info);
+            Point end = normalize(coords.get(i + 1), this.map.info);
             g.drawLine(start.x, start.y, end.x, end.y);
         }
         g.dispose();
     }
 
-    protected void draw(org.geojson.Polygon poly, BufferedImage image, GameMapBuilder.MapParameters params) {
+    protected void draw(org.geojson.Polygon poly, BufferedImage image) {
         Graphics2D g = image.createGraphics();
         LinkedList<Point> points = new LinkedList<>();
         for (LngLatAlt coord : poly.getExteriorRing()) {
-            points.add(normalize(coord, params));
+            points.add(normalize(coord, this.map.info));
         }
         GeneralPath polyLine = new GeneralPath(GeneralPath.WIND_EVEN_ODD, points.size());
         Iterator<Point> iter = points.iterator();
@@ -67,12 +65,12 @@ public abstract class Renderer {
         g.dispose();
     }
 
-    protected void draw(MultiPolygon multiPoly, BufferedImage image, GameMapBuilder.MapParameters params) {
+    protected void draw(MultiPolygon multiPoly, BufferedImage image) {
         Graphics2D g = image.createGraphics();
         for (List<List<LngLatAlt>> poly : multiPoly.getCoordinates()) {
             LinkedList<Point> points = new LinkedList<>();
             for (LngLatAlt coord : poly.get(0)) {
-                points.add(normalize(coord, params));
+                points.add(normalize(coord, this.map.info));
             }
             GeneralPath polyLine = new GeneralPath(GeneralPath.WIND_EVEN_ODD, points.size());
             Iterator<Point> iter = points.iterator();
@@ -88,11 +86,11 @@ public abstract class Renderer {
         g.dispose();
     }
 
-    private Point normalize(LngLatAlt point, GameMapBuilder.MapParameters params) {
+    private Point normalize(LngLatAlt point, MapInfo info) {
         Point p = new Point();
-        p.x = (int) ((point.getLongitude() - params.longitude.getMin()) / params.longitude.getRange() * (double)params.width);
-        p.y = (int) ((point.getLatitude() - params.latitude.getMin()) / params.latitude.getRange() * (double)params.height);
-        p.y = params.height - 1 - p.y;
+        p.x = (int) ((point.getLongitude() - info.longitude.getMin()) / info.longitude.getRange() * (double)info.width);
+        p.y = (int) ((point.getLatitude() - info.latitude.getMin()) / info.latitude.getRange() * (double)info.height);
+        p.y = info.height - 1 - p.y;
         return p;
     }
 }
