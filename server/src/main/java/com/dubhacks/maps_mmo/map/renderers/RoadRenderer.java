@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class RoadRenderer extends Renderer {
+
     public RoadRenderer(GameMap map) {
         super(map);
     }
@@ -20,17 +21,30 @@ public class RoadRenderer extends Renderer {
         BufferedImage image = this.allocateImage();
 
         for (Feature road : features) {
+            String type = road.getProperty("type");
             GeoJsonObject geometry = road.getGeometry();
             if (geometry instanceof LineString) {
-                this.draw((LineString) geometry, image);
+                this.draw((LineString) geometry, widthOf(type), image);
             }
         }
 
         this.write(image);
     }
 
+    private static float widthOf(String type) {
+        switch (type) {
+            case "residential":
+            case "tertiary": return 2;
+            case "motorway":
+            case "secondary": return (float) 2.5;
+            case "primary": return 3;
+            default: return 2;
+        }
+    }
+
     @Override
     public GeoJsonFileType getFileType() {
         return GeoJsonFileType.ROADS;
     }
+
 }
