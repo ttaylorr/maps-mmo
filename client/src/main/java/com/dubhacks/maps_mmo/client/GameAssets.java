@@ -13,23 +13,25 @@ public class GameAssets {
     private static BufferedImage terrain;
     private static BufferedImage tree_single;
     private static BufferedImage character_single;
-    
+    private static BufferedImage character_brunette_single;
+
     private static BufferedImage blank;
-    
 
     private static BufferedImage[] tiles;
 
     /**
      * Loads game assets into memory.
-     *
+     * <p>
      * @return <code>true</code> if assets properly loaded, otherwise
      *         <code>false</code>
+     * <p>
      * @throws IOException
      */
     public static boolean load() throws IOException {
         terrain = ImageIO.read(new File("src/main/resources/LPC_Terrain_0/terrain.png"));
         tree_single = ImageIO.read(new File("src/main/resources/tree_single.png"));
         character_single = ImageIO.read(new File("src/main/resources/character_single.png"));
+        character_brunette_single = ImageIO.read(new File("src/main/resources/character_brunette_single.png"));
 
         blank = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
 
@@ -47,9 +49,13 @@ public class GameAssets {
         BufferedImage image = tiles[b];
         return image == null ? blank : image;
     }
-    
+
     public static BufferedImage getPlayerSprite() {
         return character_single;
+    }
+
+    public static BufferedImage getOtherPlayerSprite() {
+        return character_brunette_single;
     }
 
 }

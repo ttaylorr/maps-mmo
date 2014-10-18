@@ -88,12 +88,9 @@ public class Game {
                 }
             }
             for (ClientPlayer other : getPlayers()) {
-                g.setColor(Color.RED);
-                g.fillRect(32 * other.getX() + 4, 32 * other.getY() + 4, 24, 24);
-                g.drawString(other.getName(), 32 * other.getX(), 32 * other.getY() - 60);
+                g.drawImage(GameAssets.getOtherPlayerSprite(), null, 32 * other.getX(), 32 * other.getY());
             }
-            g.setColor(Color.GREEN);
-            g.fillRect(32 * localPlayer.getX() + 4, 32 * localPlayer.getY() + 4, 24, 24);
+            g.drawImage(GameAssets.getPlayerSprite(), null, 32 * localPlayer.getX(), 32 * localPlayer.getY());
         } else {
             g.drawString("Waiting to connect...", 50, 50);
         }
