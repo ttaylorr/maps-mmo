@@ -27,7 +27,7 @@ public class SocketPlayer {
     }
 
     public void sendPacket(Packet packet) {
-        System.out.println("Sending packet of type: " + packet.getClass().getSimpleName());
+        //System.out.println("Sending packet of type: " + packet.getClass().getSimpleName());
         try {
             os.writeObject(packet);
             os.flush();
@@ -50,7 +50,7 @@ public class SocketPlayer {
 
     public void disconnect() {
         try {
-            System.out.println("Disconnecting client from: " + this.socket.getRemoteSocketAddress());
+            System.out.println("Disconnecting client from: " + socket.getRemoteSocketAddress());
             socket.close();
         } catch (IOException e) {
             System.err.println("ERROR disconnecting client " + remoteAddress + ": " + e.getMessage());
@@ -63,7 +63,7 @@ public class SocketPlayer {
             try {
                 is = new ObjectInputStream(socket.getInputStream());
             } catch (EOFException e) {
-                SocketPlayer.this.disconnect();
+                disconnect();
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
@@ -73,7 +73,7 @@ public class SocketPlayer {
                 try {
                     Object read = is.readObject();
                     if (read instanceof Packet) {
-                        System.out.println("Received packet of type: " + read.getClass().getSimpleName());
+                        //System.out.println("Received packet of type: " + read.getClass().getSimpleName());
                         incomingPackets.add((Packet)read);
                     } else {
                         System.err.println("ERROR: Received object from " + remoteAddress + " that is not a Packet");

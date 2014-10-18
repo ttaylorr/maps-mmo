@@ -14,7 +14,6 @@ public class EventManager {
         for (Method method : listener.getClass().getMethods()) {
             EventHandler annotation = method.getAnnotation(EventHandler.class);
             if (annotation != null) {
-            System.out.println("Adding 1 handler");
                 List<Class<?>> types = new ArrayList<>();
                 for (Class<?> clazz : method.getParameterTypes()) {
                     types.add(clazz);

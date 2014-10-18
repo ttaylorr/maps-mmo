@@ -27,6 +27,7 @@ public class ConnectListener implements Listener {
             LocalPlayer player = new LocalPlayer(self, playerAdd.id, playerAdd.name);
             player.setLocation(playerAdd.x, playerAdd.y);
             game.setLocalPlayer(player);
+            System.out.println("Found ourselves");
         } else {
             ClientPlayer player = new ClientPlayer(playerAdd.id, playerAdd.name);
             player.setLocation(playerAdd.x, playerAdd.y);
