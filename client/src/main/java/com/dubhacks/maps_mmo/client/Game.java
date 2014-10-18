@@ -1,11 +1,15 @@
 package com.dubhacks.maps_mmo.client;
 
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
 
 import com.dubhacks.maps_mmo.net.SocketPlayer;
 import com.dubhacks.maps_mmo.event.EventManager;
+import com.dubhacks.maps_mmo.packets.ConnectPacket;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -15,7 +19,6 @@ public class Game {
     private final EventManager eventManager;
 
     private Rectangle bounds;
-    private GamePanel panel;
 
     private SocketPlayer connectingPlayer;
     private ClientPlayer player;
@@ -29,8 +32,24 @@ public class Game {
         this.eventManager = eventManager;
     }
 
-    public void setPanel(GamePanel panel) {
-        this.panel = panel;
+    public boolean isPlaying() {
+        return player != null;
+    }
+
+    public boolean isConnected() {
+        return isPlaying() || connectingPlayer != null;
+    }
+
+    public void connect(String hostname, int port, String username) throws IOException {
+        if (isConnected()) {
+            throw new IllegalStateException("already connected");
+        }
+        Socket socket = new Socket();
+        socket.connect(new InetSocketAddress(hostname, port));
+        connectingPlayer = new SocketPlayer(socket);
+        ConnectPacket packet = new ConnectPacket();
+        packet.name = username;
+        connectingPlayer.sendPacket(packet);
     }
 
     public Rectangle getBounds() {
@@ -39,13 +58,6 @@ public class Game {
 
     public void setBounds(Rectangle newBounds) {
         bounds = newBounds;
-        repaint();
-    }
-
-    public void repaint() {
-        if (panel != null) {
-            panel.repaint();
-        }
     }
 
     public void paint(Graphics2D g) {
@@ -120,7 +132,6 @@ public class Game {
         newBounds.y += dy;
         if (this.isValidBounds(newBounds)) {
             this.bounds = newBounds;
-            this.repaint();
         }
     }
     

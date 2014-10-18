@@ -6,11 +6,11 @@ public enum GeoJsonFileType {
 
     ROADS(Color.WHITE, GameMap.ROAD_MEDIUM),
 
-    WATER(Color.BLUE, GameMap.TERRAIN_WATER),
+    WATER(Color.DARK_GRAY, GameMap.TERRAIN_WATER),
 
-    LAND_USAGES(Color.GREEN, GameMap.TERRAIN_FOREST),
+    LAND_USAGES(Color.GRAY, GameMap.TERRAIN_FOREST),
 
-    BUILDINGS(Color.GRAY, GameMap.BUILDING_PLACEHOLDER);
+    BUILDINGS(Color.LIGHT_GRAY, GameMap.BUILDING_PLACEHOLDER);
 
     protected final Color color;
     protected final byte mapValue;
