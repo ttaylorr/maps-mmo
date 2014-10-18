@@ -29,6 +29,12 @@ public class PacketManager {
         }
     }
 
+    public void unregisterHandler(Listener listener) {
+        for (Class<? extends Packet> clazz : this.handlers.keySet()) {
+            this.handlers.remove(clazz, listener);
+        }
+    }
+
     public void handlePacket(Packet packet) {
         List<ListenerHandler> handlers = new ArrayList<>(this.handlers.get(packet.getClass()));
         Collections.sort(handlers); // Sort by the priority of the handlers
