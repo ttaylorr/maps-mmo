@@ -27,7 +27,7 @@ app.get('/center/', function(req, res) {
 });
 
 var server = app.listen(3000, function() {
-  console.log("startin' this bitch on 3000");
+  console.log("Starting location service on port 3000");
 });
 
 function getGeoJson(max_lat, min_lat, max_lon, min_lon, res) {
@@ -38,10 +38,13 @@ function getGeoJson(max_lat, min_lat, max_lon, min_lon, res) {
   var a_req = http.get(url, function(_res) {
     _res.on('data', function(chunk) {
       content += chunk;
+      console.log("Getting a chunk of data "+chunk.length+" bytes long...");
     });
 
     _res.on('end', function() {
+      console.log("Got all of the data! Parsing DOM tree...");
       dom = new DOMParser().parseFromString(content);
+      console.log("Succesful parsing! Sending back the response...");
       res.send(o2j.osm2geojson(dom));
     });
   });
