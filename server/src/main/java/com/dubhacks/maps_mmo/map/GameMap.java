@@ -62,7 +62,7 @@ public class GameMap implements IGameMap {
 
         for (int x = 0; x < this.tiles.length; x++) {
             for (int y = 0; y < this.tiles[x].length; y++) {
-                byte b = this.tiles[x][y];
+                byte b = this.get(x,y);
                 if (b != 0) {
                     GeoJsonFileType type = GeoJsonFileType.fromByte(b);
 
