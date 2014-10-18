@@ -3,11 +3,13 @@ package com.dubhacks.maps_mmo.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import com.dubhacks.maps_mmo.net.SocketPlayer;
 import com.dubhacks.maps_mmo.event.EventManager;
+import com.dubhacks.maps_mmo.net.SocketPlayer;
+import com.dubhacks.maps_mmo.packets.Packet;
 
 public class ServerConnectionManager {
     private final ServerSocket serverSocket;
@@ -40,6 +42,9 @@ public class ServerConnectionManager {
             while (player.hasPacket()) {
                 eventManager.dispatch(player, player.getNextPacket());
             }
+            if (player.socket().isClosed()) {
+                incomingSockets.remove(player);
+            }
         }
 
         ServerPlayer[] players = socketPlayers.values().toArray(new ServerPlayer[0]);
@@ -47,7 +52,14 @@ public class ServerConnectionManager {
             while (player.getSocketPlayer().hasPacket()) {
                 eventManager.dispatch(player, player.getSocketPlayer().getNextPacket());
             }
+            if (player.getSocketPlayer().socket().isClosed()) {
+                socketPlayers.remove(player.getSocketPlayer().socket());
+            }
         }
+    }
+
+    public Collection<ServerPlayer> getPlayers() {
+        return socketPlayers.values();
     }
 
     public void addPlayer(ServerPlayer player) {
@@ -61,5 +73,20 @@ public class ServerConnectionManager {
         Socket socket = player.getSocketPlayer().socket();
         incomingSockets.remove(socket);
         socketPlayers.remove(socket);
+    }
+
+    public void broadcastPacket(Packet packet) {
+        for (ServerPlayer player : socketPlayers.values()) {
+            System.out.println("Broadcasting to " + player.getName());
+            player.getSocketPlayer().sendPacket(packet);
+        }
+    }
+
+    public void broadcastPacketExcept(Packet packet, ServerPlayer except) {
+        for (ServerPlayer player : socketPlayers.values()) {
+            if (player != except) {
+                player.getSocketPlayer().sendPacket(packet);
+            }
+        }
     }
 }

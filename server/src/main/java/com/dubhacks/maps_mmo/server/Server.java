@@ -1,5 +1,7 @@
 package com.dubhacks.maps_mmo.server;
 
+import java.util.Collection;
+
 import com.dubhacks.maps_mmo.core.map.GameMap;
 import com.dubhacks.maps_mmo.event.EventManager;
 
@@ -24,6 +26,10 @@ public class Server {
 
     public GameMap getMap() {
         return map;
+    }
+
+    public Collection<ServerPlayer> getPlayers() {
+        return connectionManager.getPlayers();
     }
 
     public void tick() {

@@ -1,19 +1,24 @@
 package com.dubhacks.maps_mmo.client;
 
-import com.dubhacks.maps_mmo.net.SocketPlayer;
 
 public class ClientPlayer {
-    private final SocketPlayer socketPlayer;
+    private final int id;
+    private final String name;
 
     private int x;
     private int y;
 
-    public ClientPlayer(SocketPlayer socketPlayer) {
-        this.socketPlayer = socketPlayer;
+    public ClientPlayer(int id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
-    public SocketPlayer getSocketPlayer() {
-        return socketPlayer;
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public int getX() {

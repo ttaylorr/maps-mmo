@@ -1,5 +1,6 @@
 package com.dubhacks.maps_mmo.client;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
@@ -16,13 +17,14 @@ import com.dubhacks.maps_mmo.net.SocketPlayer;
 import com.dubhacks.maps_mmo.packets.ConnectPacket;
 
 public class Game {
-
     private final EventManager eventManager;
 
     private Rectangle bounds;
 
+    private String connectingName;
     private SocketPlayer connectingPlayer;
-    private ClientPlayer player;
+    private LocalPlayer localPlayer;
+    private final Set<ClientPlayer> players = new HashSet<>();
 
     private final Set<Integer> keysDown = new HashSet<>();
 
@@ -33,7 +35,7 @@ public class Game {
     }
 
     public boolean isPlaying() {
-        return player != null;
+        return localPlayer != null;
     }
 
     public boolean isConnected() {
@@ -46,6 +48,7 @@ public class Game {
         }
         Socket socket = new Socket();
         socket.connect(new InetSocketAddress(hostname, port));
+        connectingName = username;
         connectingPlayer = new SocketPlayer(socket);
         ConnectPacket packet = new ConnectPacket();
         packet.name = username;
@@ -60,6 +63,10 @@ public class Game {
         bounds = newBounds;
     }
 
+    public Set<ClientPlayer> getPlayers() {
+        return players;
+    }
+
     public boolean isMapLoaded() {
         return map != null;
     }
@@ -70,7 +77,7 @@ public class Game {
     }
 
     public void paint(Graphics2D g) {
-        if (isMapLoaded()) {
+        if (isPlaying()) {
             setBounds(new Rectangle(getBounds().x, getBounds().y, (int)Math.ceil(g.getClipBounds().getWidth() / 32), (int)Math.ceil(g.getClipBounds().getHeight()/ 32)));
             Rectangle b = getBounds();
             for (int x = 0; x < b.width; x++) {
@@ -80,21 +87,49 @@ public class Game {
                     g.drawImage(image, null, 32 * x, 32 * y);
                 }
             }
+            for (ClientPlayer other : getPlayers()) {
+                g.setColor(Color.RED);
+                g.fillRect(32 * other.getX() + 4, 32 * other.getY() + 4, 24, 24);
+                g.drawString(other.getName(), 32 * other.getX(), 32 * other.getY() - 60);
+            }
+            g.setColor(Color.GREEN);
+            g.fillRect(32 * localPlayer.getX() + 4, 32 * localPlayer.getY() + 4, 24, 24);
         } else {
-            g.drawString("Waiting for map data to load...", 50, 50);
+            g.drawString("Waiting to connect...", 50, 50);
         }
     }
 
-    public ClientPlayer getPlayer() {
-        return player;
+    public LocalPlayer getPlayer() {
+        return localPlayer;
+    }
+
+    public ClientPlayer getPlayerById(int id) {
+        for (ClientPlayer player : players) {
+            if (player.getId() == id) return player;
+        }
+        return null;
+    }
+
+    public String getConnectingName() {
+        return connectingName;
     }
 
     public void setConnectingPlayer(SocketPlayer socketPlayer) {
         connectingPlayer = socketPlayer;
     }
 
-    public void setPlayer(ClientPlayer player) {
-        this.player = player;
+    public void setLocalPlayer(LocalPlayer player) {
+        localPlayer = player;
+        connectingPlayer = null;
+        connectingName = null;
+    }
+
+    public void addPlayer(ClientPlayer player) {
+        players.add(player);
+    }
+
+    public void removePlayer(ClientPlayer player) {
+        players.remove(player);
     }
 
     public void setKeyDown(int keyCode) {
@@ -110,15 +145,11 @@ public class Game {
     }
 
     public void tick() {
-        if (connectingPlayer != null) {
-            while (connectingPlayer.hasPacket()) {
-                eventManager.dispatch(connectingPlayer, connectingPlayer.getNextPacket());
-            }
+        while (connectingPlayer != null && connectingPlayer.hasPacket()) {
+            eventManager.dispatch(connectingPlayer, connectingPlayer.getNextPacket());
         }
-        if (player != null) {
-            while (player.getSocketPlayer().hasPacket()) {
-                eventManager.dispatch(player, player.getSocketPlayer().getNextPacket());
-            }
+        while (localPlayer != null && localPlayer.getSocketPlayer().hasPacket()) {
+            eventManager.dispatch(localPlayer, localPlayer.getSocketPlayer().getNextPacket());
         }
 
         int dx = 0, dy = 0;
@@ -136,16 +167,21 @@ public class Game {
         }
 
         if (dx != 0 || dy != 0) {
-            tryMoveBounds(dx, dy);
+            if (tryMoveBounds(dx, dy)) {
+                localPlayer.setLocation(localPlayer.getX() + dx, localPlayer.getY() + dy);
+            }
         }
     }
 
-    private void tryMoveBounds(int dx, int dy) {
+    private boolean tryMoveBounds(int dx, int dy) {
         Rectangle newBounds = new Rectangle(bounds);
         newBounds.x += dx;
         newBounds.y += dy;
         if (isValidBounds(newBounds)) {
             bounds = newBounds;
+            return true;
+        } else {
+            return false;
         }
     }
 

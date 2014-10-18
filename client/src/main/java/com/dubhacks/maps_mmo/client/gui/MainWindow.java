@@ -11,6 +11,7 @@ import javax.swing.Timer;
 import com.dubhacks.maps_mmo.client.ConnectListener;
 import com.dubhacks.maps_mmo.client.Game;
 import com.dubhacks.maps_mmo.client.GameAssets;
+import com.dubhacks.maps_mmo.client.PacketListener;
 import com.dubhacks.maps_mmo.event.EventManager;
 
 public class MainWindow {
@@ -77,6 +78,7 @@ public class MainWindow {
         timer.start();
 
         eventManager.addListener(new ConnectListener(game));
+        eventManager.addListener(new PacketListener(game));
     }
 
 }

@@ -39,6 +39,7 @@ public class ServerLauncher {
         Server server = new Server(connManager, eventManager, map);
 
         eventManager.addListener(new ConnectListener(server));
+        eventManager.addListener(new PacketListener(server));
 
         // client accept thread
         new Thread(new Runnable() {
