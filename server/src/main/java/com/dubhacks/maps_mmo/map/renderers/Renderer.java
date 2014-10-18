@@ -8,13 +8,14 @@ import java.awt.*;
 import java.awt.Point;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
 
 public abstract class Renderer {
+    protected static final LngLatAlt CENTER = new LngLatAlt(47.653510, -122.305728); // current location
+    protected static final double RADIUS = 0.01;
+
     protected static final int BINARY_IMAGE_SET = 0xffffffff;
 
     protected final GameMapBuilder.MapParameters mapParameters;
@@ -23,9 +24,13 @@ public abstract class Renderer {
         this.mapParameters = mapParameters;
     }
 
-    public abstract void render(byte[][] tiles, List<File> files) throws IOException;
+    public abstract void render(byte[][] tiles, List<Feature> features) throws IOException;
 
     public abstract GeoJsonFileType getFileType();
+
+    protected BufferedImage allocateImage() {
+        return new BufferedImage(this.mapParameters.width, this.mapParameters.height, BufferedImage.TYPE_BYTE_BINARY);
+    }
 
     protected void draw(LineString line, BufferedImage image, GameMapBuilder.MapParameters params) {
         draw(line, 1, image, params);

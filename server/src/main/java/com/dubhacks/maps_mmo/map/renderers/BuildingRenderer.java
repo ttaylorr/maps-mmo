@@ -3,7 +3,6 @@ package com.dubhacks.maps_mmo.map.renderers;
 import com.dubhacks.maps_mmo.map.GameMap;
 import com.dubhacks.maps_mmo.map.GameMapBuilder;
 import com.dubhacks.maps_mmo.map.GeoJsonFileType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.geojson.*;
 
 import javax.imageio.ImageIO;
@@ -18,11 +17,9 @@ public class BuildingRenderer extends Renderer {
     }
 
     @Override
-    public void render(byte[][] tiles, List<File> files) throws IOException {
-        BufferedImage buildingImage = new BufferedImage(mapParameters.width, mapParameters.height, BufferedImage.TYPE_BYTE_BINARY);
-        FeatureCollection buildings = new ObjectMapper().readValue(files.get(0), FeatureCollection.class);
-        List<Feature> buildingList = buildings.getFeatures();
-        for (Feature building : buildingList) {
+    public void render(byte[][] tiles, List<Feature> features) throws IOException {
+        BufferedImage buildingImage = this.allocateImage();
+        for (Feature building : features) {
             GeoJsonObject geometry = building.getGeometry();
             if (geometry instanceof MultiPolygon) {
                 draw((MultiPolygon)geometry, buildingImage, this.mapParameters);
@@ -32,6 +29,7 @@ public class BuildingRenderer extends Renderer {
                 draw((LineString)geometry, buildingImage, this.mapParameters);
             }
         }
+
         for (int x = 0; x < mapParameters.width; x++) {
             for (int y = 0; y < mapParameters.height; y++) {
                 if (buildingImage.getRGB(x, y) == BINARY_IMAGE_SET) {
@@ -39,6 +37,7 @@ public class BuildingRenderer extends Renderer {
                 }
             }
         }
+
         ImageIO.write(buildingImage, "bmp", new File("buildingImage.bmp"));
     }
 

@@ -9,10 +9,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import javax.imageio.ImageIO;
-import org.geojson.LineString;
-import org.geojson.LngLatAlt;
-import org.geojson.MultiPolygon;
-import org.geojson.Polygon;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.geojson.*;
 
 public class GameMapBuilder {
     private final Map<GeoJsonFileType, List<File>> files = new TreeMap<>();
@@ -73,9 +72,11 @@ public class GameMapBuilder {
         renderers.add(new RoadRenderer(mapParameters));
 
         for (Renderer renderer : renderers) {
-            System.out.print("Starting render of type: "+renderer.getClass().getSimpleName()+"...");
+            System.out.print("Starting render of type: " + renderer.getClass().getSimpleName() + "...");
             long start = System.currentTimeMillis();
-            renderer.render(tiles, this.files.get(renderer.getFileType()));
+            for (File file : this.files.get(renderer.getFileType())) {
+                renderer.render(tiles, new ObjectMapper().readValue(file, FeatureCollection.class).getFeatures());
+            }
             System.out.print(" (Finished in "+(System.currentTimeMillis() - start)+"ms)\n");
         }
 
@@ -196,12 +197,9 @@ public class GameMapBuilder {
 
         gmb.addFile(GeoJsonFileType.Water, new File("geojson/seattle_washington-waterareas.geojson"));
         gmb.addFile(GeoJsonFileType.Roads, new File("geojson/seattle_washington-roads.geojson"));
-        gmb.addFile(GeoJsonFileType.Water, new File("geojson/seattle_washington-waterareas_gen1.geojson"));
-        gmb.addFile(GeoJsonFileType.Water, new File("geojson/seattle_washington-waterareas_gen0.geojson"));
-        gmb.addFile(GeoJsonFileType.Water, new File("geojson/seattle_washington-waterways.geojson"));
         gmb.addFile(GeoJsonFileType.LandUsages, new File("geojson/seattle_washington-landusages.geojson"));
         gmb.addFile(GeoJsonFileType.Buildings, new File("geojson/seattle_washington-buildings.geojson"));
-        
+
         GameMap map = gmb.render();
 
         System.out.print("Writing to image...");
@@ -216,15 +214,19 @@ public class GameMapBuilder {
             for (int y = 0; y < map.getHeight(); y++) {
                 switch (map.get(x, y)) {
                     case GameMap.TERRAIN_WATER:
-                        g.setColor(Color.darkGray);
+                        g.setColor(Color.BLUE);
                         g.drawLine(x, y, x, y);
                         break;
                     case GameMap.ROAD_MEDIUM:
-                        g.setColor(Color.lightGray);
+                        g.setColor(Color.LIGHT_GRAY);
                         g.drawLine(x, y, x, y);
                         break;
                     case GameMap.BUILDING_PLACEHOLDER:
-                        g.setColor(Color.white);
+                        g.setColor(Color.GRAY);
+                        g.drawLine(x, y, x, y);
+                        break;
+                    case GameMap.TERRAIN_FOREST:
+                        g.setColor(Color.GREEN);
                         g.drawLine(x, y, x, y);
                         break;
                 }
@@ -233,5 +235,4 @@ public class GameMapBuilder {
         g.dispose();
         ImageIO.write(image, format, imageFile);
     }
-    
 }
