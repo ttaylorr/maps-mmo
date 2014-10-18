@@ -23,7 +23,7 @@ public class ServerLauncher {
     public static void main(String[] args) throws IOException {
         GameMapBuilder gmb = new GameMapBuilder();
 
-        String place = JOptionPane.showInputDialog("Please enter a location...", "Seattle, WA");
+        String place = JOptionPane.showInputDialog("Please enter a location...", "Husky Union Building");
         GoogleMaps.LatLng loc = GoogleMaps.fromString(place);
         double rad = 0.01;
 
