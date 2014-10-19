@@ -146,20 +146,20 @@ public class Game {
         }
 
         int dx = 0, dy = 0;
-        if (isKeyDown(KeyEvent.VK_LEFT)) {
+        if (isKeyDown(KeyEvent.VK_LEFT) || isKeyDown(KeyEvent.VK_A)) {
             dx--;
         }
-        if (isKeyDown(KeyEvent.VK_RIGHT)){
+        if (isKeyDown(KeyEvent.VK_RIGHT) || isKeyDown(KeyEvent.VK_D)) {
             dx++;
         }
-        if (isKeyDown(KeyEvent.VK_UP)){
+        if (isKeyDown(KeyEvent.VK_UP) || isKeyDown(KeyEvent.VK_W)) {
             dy--;
         }
-        if (isKeyDown(KeyEvent.VK_DOWN)) {
+        if (isKeyDown(KeyEvent.VK_DOWN) || isKeyDown(KeyEvent.VK_S)) {
             dy++;
         }
 
-        if (isKeyDown(KeyEvent.VK_G)) {
+        if (isKeyDown(KeyEvent.VK_R)) {
             localPlayer.setLocation(map.getWidth() / 2, map.getHeight() / 2);
         }
 
