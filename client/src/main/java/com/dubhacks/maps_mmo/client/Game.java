@@ -159,6 +159,10 @@ public class Game {
             dy++;
         }
 
+        if (isKeyDown(KeyEvent.VK_G)) {
+            localPlayer.setLocation(map.getWidth() / 2, map.getHeight() / 2);
+        }
+
         if (dx != 0 || dy != 0) {
             byte oldTile = this.map.get(localPlayer.getX(), localPlayer.getY());
             Point newLocation = new Point(localPlayer.getX() + dx, localPlayer.getY() + dy);
