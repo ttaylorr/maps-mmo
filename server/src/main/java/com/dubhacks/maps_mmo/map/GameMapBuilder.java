@@ -23,7 +23,7 @@ public class GameMapBuilder {
     private byte[][] tiles;
 
     public GameMapBuilder() {
-        this(0.00005);
+        this(0.000025);
     }
     
     /**
